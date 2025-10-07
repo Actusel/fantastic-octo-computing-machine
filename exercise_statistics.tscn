@@ -1,0 +1,100 @@
+[gd_scene load_steps=3 format=3 uid="uid://duumooocbjcpq"]
+
+[ext_resource type="Script" path="res://exercise_statistics.gd" id="1_jc5pn"]
+[ext_resource type="Script" path="res://graph_.gd" id="2_oxcx1"]
+
+[node name="exercise statistics" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jc5pn")
+
+[node name="background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.45098, 0.396078, 0.435294, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 73.0
+offset_top = 61.0
+offset_right = 482.0
+offset_bottom = 553.0
+
+[node name="DateRow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="year" type="SpinBox" parent="VBoxContainer/DateRow"]
+layout_mode = 2
+min_value = 1970.0
+max_value = 2100.0
+value = 2025.0
+
+[node name="month" type="OptionButton" parent="VBoxContainer/DateRow"]
+layout_mode = 2
+item_count = 12
+popup/item_0/text = "Jan"
+popup/item_0/id = 0
+popup/item_1/text = "Feb"
+popup/item_1/id = 1
+popup/item_2/text = "Mar"
+popup/item_2/id = 2
+popup/item_3/text = "Apr"
+popup/item_3/id = 3
+popup/item_4/text = "May"
+popup/item_4/id = 4
+popup/item_5/text = "Jun"
+popup/item_5/id = 5
+popup/item_6/text = "Jul"
+popup/item_6/id = 6
+popup/item_7/text = "Aug"
+popup/item_7/id = 7
+popup/item_8/text = "Sep"
+popup/item_8/id = 8
+popup/item_9/text = "Oct"
+popup/item_9/id = 9
+popup/item_10/text = "Nov"
+popup/item_10/id = 10
+popup/item_11/text = "Dec"
+popup/item_11/id = 11
+
+[node name="day" type="SpinBox" parent="VBoxContainer/DateRow"]
+layout_mode = 2
+min_value = 1.0
+max_value = 31.0
+value = 1.0
+
+[node name="WeightRow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="label" type="Label" parent="VBoxContainer/WeightRow"]
+layout_mode = 2
+text = "Weight:"
+
+[node name="weight" type="SpinBox" parent="VBoxContainer/WeightRow"]
+layout_mode = 2
+max_value = 400.0
+step = 0.5
+suffix = "kg"
+
+[node name="ButtonsRow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="submit" type="Button" parent="VBoxContainer/ButtonsRow"]
+layout_mode = 2
+
+[node name="clear" type="Button" parent="VBoxContainer/ButtonsRow"]
+layout_mode = 2
+
+[node name="graph_" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_oxcx1")
