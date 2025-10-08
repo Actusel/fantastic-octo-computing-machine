@@ -1,7 +1,10 @@
-[gd_scene format=3 uid="uid://uushclk1ejgk"]
+[gd_scene load_steps=2 format=3 uid="uid://uushclk1ejgk"]
+
+[ext_resource type="Texture2D" uid="uid://bmspdadwfumot" path="res://icon.svg" id="1_4yjui"]
 
 [node name="box" type="RigidBody2D"]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_4yjui")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

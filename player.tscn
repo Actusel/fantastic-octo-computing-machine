@@ -18,6 +18,7 @@ shader_parameter/tint_strength = 0.1
 shader_parameter/grain_strength = 0.05
 
 [node name="player" type="CharacterBody2D"]
+motion_mode = 1
 script = ExtResource("1_h8b4u")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -38,6 +39,7 @@ one_shot = true
 layer = 5
 
 [node name="ColorRect" type="ColorRect" parent="ui"]
+visible = false
 material = SubResource("ShaderMaterial_psr8h")
 anchors_preset = 15
 anchor_right = 1.0
