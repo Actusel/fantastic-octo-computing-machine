@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://6alx6yobr1sr"
-path="res://.godot/imported/acid_water.png-b1158c6b7489617f8cb302e13d68b04b.ctex"
+uid="uid://dgjxjn5wk4wpx"
+path="res://.godot/imported/box.png-196cb2b6d7422a4ab3b9c60b5a994fe3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://acid_water.png"
-dest_files=["res://.godot/imported/acid_water.png-b1158c6b7489617f8cb302e13d68b04b.ctex"]
+source_file="res://box.png"
+dest_files=["res://.godot/imported/box.png-196cb2b6d7422a4ab3b9c60b5a994fe3.ctex"]
 
 [params]
 

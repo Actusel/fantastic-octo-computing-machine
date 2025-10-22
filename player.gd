@@ -8,7 +8,7 @@ const DOOR = preload("res://door.tscn")
 const SPEED = 200.0
 const dash_time = 0.2
 const DASH_SPEED = 600
-
+const push_str = 100
 var dashing = false
 var dash_timer: float
 
@@ -34,5 +34,9 @@ func _physics_process(delta):
 		velocity.x = move_toward(velocity.x, direction.x*SPEED, 40)
 		velocity.y = move_toward(velocity.y, direction.y*SPEED, 40)
 	
-	
 	move_and_slide()
+	
+	for i in get_slide_collision_count():
+		var collision = get_slide_collision(i)
+		if collision.get_collider().is_in_group("movable"):
+			collision.get_collider().apply_central_impulse(-collision.get_normal()*push_str)
