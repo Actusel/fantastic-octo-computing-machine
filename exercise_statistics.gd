@@ -12,22 +12,20 @@ extends Control
 @onready var graph_ = $"graph_"
 @onready var label: Label = $VBoxContainer/WeightRow/label
 
-var graph_data := {}  # e.g. { "Temperature": [], "Humidity": [], ... }
+var graph_data := {} 
 var current_graph := "leggies"
  
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	graph_data = {"leggies": [], "armstrong": [], "stamina": [], "braincells": []}
+	graph_data = {"leggies": [], "armstrong": [], "stamina": []}
 	for keys in graph_data.keys():
 		option_button.add_item(keys)
-	
 	option_button.item_selected.connect(_on_graph_selected)
 	submit.pressed.connect(_on_submit)
 	clear.pressed.connect(_on_clear)
 	add_graph.pressed.connect(_on_add_graph)
-	
-	
+	graph_.update_graph(graph_data)
 
 func _on_add_graph():
 	if not line_edit.text: return
@@ -38,8 +36,10 @@ func _on_add_graph():
 
 func _on_graph_selected(index: int) -> void:
 	current_graph = option_button.get_item_text(index)
-	graph_.update_graph(graph_data[current_graph])
+	if not graph_.all_graphs: graph_.update_graph(graph_data[current_graph])
 	
+	if current_graph=="stamina": label.text = "VO2 max"
+	else: label.text = "Weight(kg):"
 
 
 func date_to_days(year: int, month: int, day: int) -> float:
@@ -59,7 +59,7 @@ func date_to_days(year: int, month: int, day: int) -> float:
 		days_in_month[1] = 29
 	
 	# Add days from complete months in current year
-	for m in range(month - 1):
+	for m in range(month):
 		total_days += days_in_month[m]
 	
 	# Add remaining days
@@ -69,13 +69,18 @@ func date_to_days(year: int, month: int, day: int) -> float:
 
 func _on_submit():
 	var y_val = weight.value
-	var days = date_to_days(year.value,(month.get_selected_id()+1),day.value)
+	var days = date_to_days(year.value,(month.get_selected_id()),day.value)
+	var updated = false
 	for points in graph_data[current_graph]:
 		if points["date"] == days:
 			points["y"] = y_val
-	graph_data[current_graph].append({ "date": days, "y": y_val })
-	graph_.call_deferred("update_graph", graph_data[current_graph])
-
+			updated = true
+			break
+	if not updated: graph_data[current_graph].append({ "date": days, "y": y_val })
 	
+	if graph_.all_graphs: graph_.call_deferred("update_graph", graph_data)
+	else: graph_.call_deferred("update_graph", graph_data[current_graph])
+
+
 func _on_clear():
 	pass

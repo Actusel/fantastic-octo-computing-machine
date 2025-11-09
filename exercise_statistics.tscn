@@ -97,13 +97,12 @@ layout_mode = 2
 
 [node name="label" type="Label" parent="VBoxContainer/WeightRow"]
 layout_mode = 2
-text = "Weight:"
+text = "Weight(kg):"
 
 [node name="weight" type="SpinBox" parent="VBoxContainer/WeightRow"]
 layout_mode = 2
 max_value = 400.0
 step = 0.5
-suffix = "kg"
 
 [node name="ButtonsRow" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2

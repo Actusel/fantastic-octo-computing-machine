@@ -1,22 +1,31 @@
 extends Control
 
-var points: Array = []  # [{date: int (days since year 0), y: float}]
+var datasets = {}
+var all_graphs = true
+var colors = [Color.RED, Color.SKY_BLUE, Color.LIME_GREEN, Color.ORANGE, Color.VIOLET]
 
-func update_graph(new_data: Array) -> void:
-	points = new_data
+func update_graph(new_data) -> void:
+	if typeof(new_data) == TYPE_DICTIONARY:
+		datasets = new_data
+	else:
+		datasets = {"Single": new_data}
 	queue_redraw()
 
 func _draw() -> void:
-	if points.is_empty():
+	if datasets.is_empty():
 		return
 
 	# Sort by date to keep the line ordered
-	points.sort_custom(func(a, b): return a["date"] < b["date"])
+	var all_points: Array = []
+	for series in datasets.values():
+		all_points += series
+	if all_points.is_empty():
+		return
 
 	# Extract numeric x (days) and y values
 	var x_values: Array = []
 	var y_values: Array = []
-	for p in points:
+	for p in all_points:
 		x_values.append(p["date"])
 		y_values.append(p["y"])
 
@@ -65,32 +74,30 @@ func _draw() -> void:
 			Color.WHITE
 		)
 
+# ---- Draw Date Labels ----
+
+		
+		
+
 	# ---- Draw Data Points + Lines ----
-	var prev_pos: Vector2
-	for i in range(points.size()):
-		var px = points[i]["date"]
-		var py = points[i]["y"]
-		var norm_x = (px - min_x) / (max_x - min_x)
-		var norm_y = (py - min_y) / (max_y - min_y)
-		var pos := Vector2(
-			margin + norm_x * graph_width,
-			origin.y - norm_y * graph_height
-		)
-
-		draw_circle(pos, 4, Color.SKY_BLUE)
-		if i > 0:
-			draw_line(prev_pos, pos, Color(0.2, 0.6, 1.0), 2)
-		prev_pos = pos
-
-	# ---- Draw Date Labels ----
-	for i in range(points.size()):
-		var px = points[i]["date"]
-		var norm_x = (px - min_x) / (max_x - min_x)
-		var pos_x = margin + norm_x * graph_width
-
-		var date_label := days_to_date(points[i]["date"])
-		var label_pos := Vector2(pos_x - 25, origin.y + 20)
-		draw_string(
+	var color_index = 0
+	for name in datasets.keys():
+		var series = datasets[name]
+		if series.is_empty():
+			continue
+		var color = colors[color_index % colors.size()]
+		color_index += 1
+		series.sort_custom(func(a,b): return a["date"] < b["date"])
+		var prev_pos: Vector2
+		for i in range(series.size()):
+			var px = series[i]["date"]
+			var py = series[i]["y"]
+			var nx = (px - min_x) / (max_x - min_x)
+			var ny = (py - min_y) / (max_y - min_y)
+			var pos = Vector2(margin + nx * graph_width, origin.y - ny * graph_height)
+			var date_label := days_to_date(px)
+			var label_pos := Vector2(pos.x - 25, origin.y + 20)
+			draw_string(
 			get_theme_default_font(),
 			label_pos,
 			date_label,
@@ -99,6 +106,10 @@ func _draw() -> void:
 			12,
 			Color.WHITE
 		)
+			draw_circle(pos, 4, color)
+			if i > 0:
+				draw_line(prev_pos, pos, color, 2)
+			prev_pos = pos
 
 # ---- Helper: Convert day number -> YYYY-MM-DD ----
 func days_to_date(total_days: float) -> String:

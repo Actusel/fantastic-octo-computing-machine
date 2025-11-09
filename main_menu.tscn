@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c2ytt1ruk06kx"]
 
 [ext_resource type="PackedScene" uid="uid://duumooocbjcpq" path="res://exercise_statistics.tscn" id="1_mq40l"]
-[ext_resource type="Script" path="res://main_menu.gd" id="1_sk3mj"]
+[ext_resource type="Script" uid="uid://dxlipf73k2ljw" path="res://main_menu.gd" id="1_sk3mj"]
 
 [node name="main menu" type="Control"]
 layout_mode = 3
@@ -52,3 +52,18 @@ offset_left = 254.0
 offset_top = 3.0
 offset_right = -2.0
 offset_bottom = 7.0
+
+[node name="PopupPanel" type="PopupPanel" parent="."]
+oversampling_override = 1.0
+
+[node name="TextEdit" type="TextEdit" parent="PopupPanel"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 96.0
+offset_bottom = 96.0
+text = "leg: inventory space
+arm:  DMG
+back: HP
+stamina: sprint&dash"
+editable = false
+scroll_vertical = 1.0
