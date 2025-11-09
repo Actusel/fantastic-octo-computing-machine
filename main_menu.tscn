@@ -31,16 +31,24 @@ text = "options
 
 [node name="quit" type="Button" parent="."]
 layout_mode = 0
-offset_left = 109.0
-offset_top = 390.0
-offset_right = 218.0
-offset_bottom = 429.0
+offset_left = 104.0
+offset_top = 485.0
+offset_right = 213.0
+offset_bottom = 524.0
 text = "quit
 "
+
+[node name="help" type="Button" parent="."]
+layout_mode = 0
+offset_left = 105.0
+offset_top = 388.0
+offset_right = 214.0
+offset_bottom = 427.0
+text = "help"
 
 [node name="exercise statistics" parent="." instance=ExtResource("1_mq40l")]
 layout_mode = 1
 offset_left = 254.0
 offset_top = 3.0
-offset_right = 2.0
+offset_right = -2.0
 offset_bottom = 7.0
