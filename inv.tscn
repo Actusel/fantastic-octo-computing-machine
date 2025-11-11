@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://bwcbmf0rxlijt"]
+
+[node name="inventory" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 1151.0
+offset_bottom = 653.0
+color = Color(0, 0, 0, 0.43529412)
+
+[node name="GridContainer" type="GridContainer" parent="ColorRect"]
+layout_mode = 0
+offset_left = 347.0
+offset_top = 292.0
+offset_right = 387.0
+offset_bottom = 332.0
+columns = 8
