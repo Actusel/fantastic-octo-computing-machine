@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://bgstnt0syqkyr"]
+
+[ext_resource type="Script" uid="uid://bioy4h7p0ew5w" path="res://inv_slot.gd" id="1_gvx5b"]
+
+[node name="inv_slot" type="Panel"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_gvx5b")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="item_display" type="Sprite2D" parent="."]
+centered = false

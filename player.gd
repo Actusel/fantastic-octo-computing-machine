@@ -3,7 +3,7 @@ extends CharacterBody2D
 @onready var dash_cooldown = $dash_cooldown
 @onready var dash_icon = $ColorRect
 @onready var label = $ui/Label
-const DOOR = preload("res://door.tscn")
+@onready var inventory: Control = $ui/inventory
 
 const SPEED = 200.0
 const dash_time = 0.2
@@ -15,8 +15,7 @@ var dash_timer: float
 func dash_indicator():
 	if dash_cooldown.time_left: return snapped(dash_cooldown.time_left,.01) 
 	else: return "ready" 
-		
-		
+
 func _physics_process(delta):
 	var direction = Input.get_vector("moveleft","moveright","moveup","movedown")
 	label.set_text(str(dash_indicator()))

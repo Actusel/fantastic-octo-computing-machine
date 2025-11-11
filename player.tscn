@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://bg066a1w7o83j"]
+[gd_scene load_steps=7 format=3 uid="uid://bg066a1w7o83j"]
 
 [ext_resource type="Script" uid="uid://bg6b3cxqn4er2" path="res://player.gd" id="1_h8b4u"]
 [ext_resource type="Texture2D" uid="uid://bmspdadwfumot" path="res://icon.svg" id="2_hbytn"]
-[ext_resource type="Shader" uid="uid://bmvtc1kskp8hg" path="res://player_filter.gdshader" id="3_xnw5g"]
+[ext_resource type="Shader" path="res://player_filter.gdshader" id="3_xnw5g"]
+[ext_resource type="PackedScene" uid="uid://bwcbmf0rxlijt" path="res://inv.tscn" id="4_hqtel"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hdkpf"]
 size = Vector2(106, 106)
@@ -29,7 +30,8 @@ shape = SubResource("RectangleShape2D_hdkpf")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(1.4, 1.4)
-position_smoothing_enabled = true
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
 
 [node name="dash_cooldown" type="Timer" parent="."]
 wait_time = 0.7
@@ -54,3 +56,10 @@ offset_right = 347.0
 offset_bottom = 186.0
 theme_override_font_sizes/font_size = 106
 text = "test"
+
+[node name="inventory" parent="ui" instance=ExtResource("4_hqtel")]
+visible = false
+offset_left = 271.0
+offset_top = 156.0
+offset_right = -232.0
+offset_bottom = -149.0

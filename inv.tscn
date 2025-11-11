@@ -1,23 +1,67 @@
-[gd_scene format=3 uid="uid://bwcbmf0rxlijt"]
+[gd_scene load_steps=3 format=3 uid="uid://bwcbmf0rxlijt"]
+
+[ext_resource type="Script" uid="uid://dcfvkalb8pm1l" path="res://inv.gd" id="1_7m4oq"]
+[ext_resource type="PackedScene" uid="uid://bgstnt0syqkyr" path="res://inv_slot.tscn" id="1_noaob"]
 
 [node name="inventory" type="Control"]
+clip_contents = true
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_7m4oq")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 0
 offset_right = 1151.0
 offset_bottom = 653.0
-color = Color(0, 0, 0, 0.43529412)
+color = Color(0.92099476, 0.9209946, 0.9209946, 0.43529412)
 
 [node name="GridContainer" type="GridContainer" parent="ColorRect"]
-layout_mode = 0
-offset_left = 347.0
-offset_top = 292.0
-offset_right = 387.0
-offset_bottom = 332.0
-columns = 8
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 48
+theme_override_constants/v_separation = 48
+columns = 6
+
+[node name="inv_slot" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot2" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot3" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot4" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot5" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot6" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot7" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot8" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot9" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot10" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot11" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
+
+[node name="inv_slot12" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
+layout_mode = 2
