@@ -19,6 +19,8 @@ func _ready():
 
 func start_game():
 	get_tree().change_scene_to_file("res://area_1.tscn")
+	Global.emit_signal("game_started")
+	
 
 func infor():
 	popup_panel.visible=true

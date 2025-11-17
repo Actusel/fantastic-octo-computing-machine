@@ -4,10 +4,18 @@ var inv
 
 var inside: bool = false
 
+enum type_list {
+	helmet,
+	body,
+	food,
+	weapon,
+	shield
+}
 
-var item_name = ""
-var icon: Texture2D
-# var can_stack = false
+@export var item_name = "default"
+@export var item_type: type_list
+@export var weight: int = 15
+@export var strongness = 2
 
 var can_pickup = true
 
@@ -24,12 +32,11 @@ func unlock(body):
 func lock(body):
 	if body.name == "player":
 		inside=false
-		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta):
 	if inside and Input.is_action_just_pressed("use") and can_pickup: 
-		if not inv.next_available_slot==null:
+		if not inv.next_available_slot==null and inv.total_weight+weight<=inv.max_weight:
 			inv.add_to_inventory(self)
 			queue_free()
-		else: print("inv full")
+		else: print("not enough space")

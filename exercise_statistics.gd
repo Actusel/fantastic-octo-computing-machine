@@ -14,11 +14,12 @@ extends Control
 
 var graph_data := {} 
 var current_graph := "leggies"
- 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	graph_data = {"leggies": [], "armstrong": [], "stamina": []}
+	Global.game_started.connect(_on_game_started)
+	if Global.graph_data: graph_data=Global.graph_data
+	else: graph_data = {"leggies": [], "armstrong": [], "stamina": []}
 	for keys in graph_data.keys():
 		option_button.add_item(keys)
 	option_button.item_selected.connect(_on_graph_selected)
@@ -80,7 +81,10 @@ func _on_submit():
 	
 	if graph_.all_graphs: graph_.call_deferred("update_graph", graph_data)
 	else: graph_.call_deferred("update_graph", graph_data[current_graph])
+	
 
+func _on_game_started():
+	Global.update(graph_data)
 
 func _on_clear():
 	pass

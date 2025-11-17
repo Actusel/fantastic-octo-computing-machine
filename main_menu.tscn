@@ -66,4 +66,3 @@ arm:  DMG
 back: HP
 stamina: sprint&dash"
 editable = false
-scroll_vertical = 1.0

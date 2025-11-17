@@ -5,63 +5,77 @@
 
 [node name="inventory" type="Control"]
 clip_contents = true
+custom_minimum_size = Vector2(400, 400)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -752.0
+offset_bottom = -198.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_vertical = 3
 script = ExtResource("1_7m4oq")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 1151.0
-offset_bottom = 653.0
-color = Color(0.92099476, 0.9209946, 0.9209946, 0.43529412)
-
-[node name="GridContainer" type="GridContainer" parent="ColorRect"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/h_separation = 48
-theme_override_constants/v_separation = 48
+color = Color(0.92099476, 0.9209946, 0.9209946, 0.43529412)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 173.0
+offset_right = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
 columns = 6
 
-[node name="inv_slot" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
+[node name="weight" type="Label" parent="."]
+layout_mode = 1
+offset_right = 181.0
+offset_bottom = 97.0
 
-[node name="inv_slot2" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
+[node name="helmet" parent="." instance=ExtResource("1_noaob")]
+layout_mode = 0
+offset_left = 136.0
+offset_top = 14.0
+offset_right = 184.0
+offset_bottom = 62.0
+slot_type = 0
 
-[node name="inv_slot3" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
+[node name="body" parent="." instance=ExtResource("1_noaob")]
+layout_mode = 0
+offset_left = 137.0
+offset_top = 72.0
+offset_right = 185.0
+offset_bottom = 120.0
+slot_type = 3
 
-[node name="inv_slot4" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
+[node name="weapon" parent="." instance=ExtResource("1_noaob")]
+layout_mode = 0
+offset_left = 207.0
+offset_top = 44.0
+offset_right = 255.0
+offset_bottom = 92.0
+slot_type = 1
 
-[node name="inv_slot5" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
-
-[node name="inv_slot6" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
-
-[node name="inv_slot7" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
-
-[node name="inv_slot8" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
-
-[node name="inv_slot9" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
-
-[node name="inv_slot10" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
-
-[node name="inv_slot11" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
-
-[node name="inv_slot12" parent="ColorRect/GridContainer" instance=ExtResource("1_noaob")]
-layout_mode = 2
+[node name="shield" parent="." instance=ExtResource("1_noaob")]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 44.0
+offset_right = 112.0
+offset_bottom = 92.0
+slot_type = 4

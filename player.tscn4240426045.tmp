@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bg066a1w7o83j"]
+[gd_scene load_steps=7 format=3 uid="uid://bg066a1w7o83j"]
 
 [ext_resource type="Script" uid="uid://bg6b3cxqn4er2" path="res://player.gd" id="1_h8b4u"]
 [ext_resource type="Texture2D" uid="uid://bmspdadwfumot" path="res://icon.svg" id="2_hbytn"]
@@ -7,11 +7,6 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hdkpf"]
 size = Vector2(106, 106)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hqtel"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sweqy"]
-bg_color = Color(0.036179114, 0.7278031, 0, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_psr8h"]
 shader = ExtResource("3_xnw5g")
@@ -50,9 +45,9 @@ offset_left = 710.0
 offset_top = 8.0
 offset_right = 1143.0
 offset_bottom = 54.0
-theme_override_styles/background = SubResource("StyleBoxFlat_hqtel")
-theme_override_styles/fill = SubResource("StyleBoxFlat_sweqy")
 value = 50.0
+allow_greater = true
+allow_lesser = true
 
 [node name="ColorRect" type="ColorRect" parent="ui"]
 visible = false
