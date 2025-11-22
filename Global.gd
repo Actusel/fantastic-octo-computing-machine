@@ -1,6 +1,8 @@
 extends Node
 
 signal game_started
+signal hp_changed(amount)
+signal max_hp_changed(amount)
 
 var graph_data := {} 
 var stamina = 0.0

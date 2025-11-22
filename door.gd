@@ -9,13 +9,13 @@ func _ready():
 	body_exited.connect(lock)
 	
 func unlock(body):
-	if body.name == "player":
+	if body.is_in_group("player"):
 		inside=true
 		
 func lock(body):
-	if body.name == "player":
+	if body.is_in_group("player"):
 		inside=false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _physics_process(delta):
-	if inside and Input.is_action_just_pressed("use"): get_parent().queue_free()
+func _physics_process(_delta):
+	if inside: get_parent().queue_free()

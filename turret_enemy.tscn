@@ -1,0 +1,34 @@
+[gd_scene load_steps=5 format=3 uid="uid://hwgk002eroac"]
+
+[ext_resource type="Texture2D" uid="uid://bmspdadwfumot" path="res://icon.svg" id="1_5nwje"]
+[ext_resource type="Script" uid="uid://cefb6wpr606ya" path="res://turret_enemy.gd" id="1_l1ivg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l1ivg"]
+size = Vector2(126, 128)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_l1ivg"]
+radius = 489.8908
+
+[node name="TurretEnemy" type="CharacterBody2D"]
+collision_layer = 4
+script = ExtResource("1_l1ivg")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_5nwje")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_l1ivg")
+
+[node name="DetectionRadius" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionRadius"]
+shape = SubResource("CircleShape2D_l1ivg")
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+
+[node name="ProjectileSpawn" type="Marker2D" parent="."]
+
+[node name="ShootTimer" type="Timer" parent="."]
+one_shot = true

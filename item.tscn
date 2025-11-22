@@ -8,7 +8,6 @@ radius = 21.023796
 
 [node name="item" type="Area2D" groups=["item"]]
 script = ExtResource("1_ttk8k")
-item_type = 2
 metadata/item = false
 
 [node name="visual" type="Sprite2D" parent="."]

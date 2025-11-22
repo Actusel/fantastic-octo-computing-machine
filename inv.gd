@@ -1,72 +1,101 @@
 extends Control
 
-
 @onready var inv_grid: GridContainer = $CenterContainer/GridContainer
-@onready var hp_bar: ProgressBar = $"../HP"
 @onready var label: Label = $weight
+
 const INV_SLOT = preload("uid://bgstnt0syqkyr")
 
 var total_slots: int = 3
-var available_slots: int = 0
-var next_available_slot
-var total_weight = 0
-var max_weight = 50
+var total_weight: int = 0
+var max_weight: int = 50
 
-# Called when the node enters the scene tree for the first time.
+var next_available_slot: int = -1
+var available_slots: int = 0
+
+
+# ---------------------------------------------------------
+# INITIALIZATION
+# ---------------------------------------------------------
 func _ready() -> void:
 	_update_stats()
-	for slots in total_slots:
+	_initialize_slots()
+	_update_weight_label()
+
+
+func _update_stats() -> void:
+	total_slots = min(3 + round(Global.leg), 30)
+	max_weight = 500 + round(Global.leg * 10)
+
+
+func _initialize_slots() -> void:
+	# Clear existing (if panel is rebuilt)
+	for c in inv_grid.get_children():
+		c.queue_free()
+
+	for i in total_slots:
 		inv_grid.add_child(INV_SLOT.instantiate())
-	update_inv()
-	label.text = "carrying " + str(total_weight) + "/" + str(max_weight) + "kg"
 
-func _update_stats(): 
-	total_slots = 3 + round(Global.leg)
-	max_weight = 500 + round(10*Global.leg)
-	if total_slots>30:
-		total_slots=30
+	# Recalculate slot availability
+	_rescan_slots()
 
-func update_inv(nw = total_weight):
-	total_weight = 0
+
+# ---------------------------------------------------------
+# INVENTORY MANAGEMENT
+# ---------------------------------------------------------
+func add_to_inventory(item_data: ItemData) -> void:
+	var weight := item_data.weight
+	var new_weight := total_weight + weight
+
+	if next_available_slot == -1:
+		print("No inventory space!")
+		return
+
+	if new_weight > max_weight:
+		print("Too heavy!")
+		return
+
+	var slot := inv_grid.get_child(next_available_slot)
+	slot.fill_slot(item_data)
+
+	total_weight = new_weight
+	_update_weight_label()
+
+	# Refresh available slot data AFTER adding
+	_rescan_slots()
+
+
+func drop_from_inventory(_item_data: ItemData) -> void:
+	# Implement later: spawn the world pickup
+	pass
+
+
+# ---------------------------------------------------------
+# SLOT SCANNING (Optimized)
+# ---------------------------------------------------------
+func _rescan_slots() -> void:
 	available_slots = 0
-	var found_first = false
-	for child in inv_grid.get_child_count():
-		if not inv_grid.get_child(child).filled:
-			available_slots+=1
-			if not found_first: 
-				next_available_slot = child
-				found_first = true
-	if not total_weight==nw:
-		total_weight=nw
-		label.text = "carrying " + str(total_weight) + "/" + str(max_weight) + "kg"
-	if not found_first:
-		next_available_slot=null
-	
+	next_available_slot = -1
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+	var child_count := inv_grid.get_child_count()
+	for i in child_count:
+		var slot = inv_grid.get_child(i)
+		if not slot.filled:
+			available_slots += 1
+			if next_available_slot == -1:
+				next_available_slot = i
+
+
+# ---------------------------------------------------------
+# UI + INPUT
+# ---------------------------------------------------------
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_home"):
 		toggle_inv()
-		print(next_available_slot)
-		print(available_slots)
 
-func eat(hp: float):
-	hp_bar.value+=hp
 
-func toggle_inv():
-	if visible:
-		visible=false
-	else:
-		visible=true
+func toggle_inv() -> void:
+	visible = not visible
 
-func drop_from_inventory(_item): pass
 
-func add_to_inventory(item):
-	var weight = item.weight
-	var new_weight = total_weight+weight
-	#update slot
-	if not next_available_slot==null and new_weight<max_weight: 
-		var item_texture = item.get_child(0).texture
-		var item_type = item.item_type
-		inv_grid.get_child(next_available_slot).fill_slot(item_texture, weight, item_type)
-		update_inv(new_weight)
+func _update_weight_label() -> void:
+	label.text = "carrying %d/%d kg" % [total_weight, max_weight]

@@ -6,6 +6,7 @@ extends CharacterBody2D
 @onready var inventory: Control = $ui/inventory
 @onready var label_2: Label = $ui/Label2
 @onready var hp_bar: ProgressBar = $ui/HP
+@onready var hp_label: Label = $ui/hp_label
 
 
 #var dragging_body : RigidBody2D = null
@@ -19,15 +20,21 @@ const DASH_SPEED = 600
 const push_str = 100
 var dashing = false
 var dash_timer: float
-var dragging = false
-var max_hp
-var HP: float 
+#var dragging = false
 
 func _ready() -> void:
-	label_2.text = str(Global.leg)
-	max_hp = hp_bar.max_value
-	max_hp = 100 + Global.back*10
-	HP = hp_bar.value
+	Global.hp_changed.connect(_on_hp_changed)
+	Global.max_hp_changed.connect(_on_max_hp_changed)
+	
+	
+func _on_hp_changed(amount):
+	hp_bar.value+=amount
+
+func _on_max_hp_changed(amount):
+	var new_hp = hp_bar.value+amount
+	hp_bar.max_value+=amount
+	hp_bar.value = new_hp
+
 
 func dash_indicator():
 	if dash_cooldown.time_left: return snapped(dash_cooldown.time_left,.01) 
@@ -36,6 +43,7 @@ func dash_indicator():
 func _physics_process(delta):
 	var direction = Input.get_vector("moveleft","moveright","moveup","movedown")
 	label.set_text(str(dash_indicator()))
+	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
 	
 	if dashing:
 		dash_timer-=delta

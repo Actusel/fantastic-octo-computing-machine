@@ -54,7 +54,7 @@ offset_left = 136.0
 offset_top = 14.0
 offset_right = 184.0
 offset_bottom = 62.0
-slot_type = 0
+slot_type = 4
 
 [node name="body" parent="." instance=ExtResource("1_noaob")]
 layout_mode = 0
@@ -62,7 +62,7 @@ offset_left = 137.0
 offset_top = 72.0
 offset_right = 185.0
 offset_bottom = 120.0
-slot_type = 3
+slot_type = 2
 
 [node name="weapon" parent="." instance=ExtResource("1_noaob")]
 layout_mode = 0
@@ -70,7 +70,7 @@ offset_left = 207.0
 offset_top = 44.0
 offset_right = 255.0
 offset_bottom = 92.0
-slot_type = 1
+slot_type = 3
 
 [node name="shield" parent="." instance=ExtResource("1_noaob")]
 layout_mode = 0
@@ -78,4 +78,4 @@ offset_left = 64.0
 offset_top = 44.0
 offset_right = 112.0
 offset_bottom = 92.0
-slot_type = 4
+slot_type = 1

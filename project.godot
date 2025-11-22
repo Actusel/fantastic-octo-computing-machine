@@ -61,6 +61,13 @@ drag={
 ]
 }
 
+[layer_names]
+
+2d_render/layer_1="world"
+2d_render/layer_2="player"
+2d_render/layer_3="enemy"
+2d_render/layer_4="projectile"
+
 [rendering]
 
 renderer/rendering_method="mobile"

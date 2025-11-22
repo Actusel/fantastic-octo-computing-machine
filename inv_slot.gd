@@ -1,99 +1,130 @@
 extends Panel
-
-class_name item_slot
+class_name ItemSlot
 
 @onready var item_display: Sprite2D = $item_display
 @onready var button: Button = $Button
 
-var inv
-var hp_bar
+var inv: Control
+var filled: bool = false
+var equipped: bool = false
 
-enum type_list {
-	helmet,
-	body,
-	food,
-	weapon,
-	shield
-}
+# The item stored in this slot
+var item_data: ItemData = null
 
-enum slot {
-	helmet,
-	weapon,
+enum slot_types {
 	inventory,
+	shield,
 	body,
-	shield
+	weapon,
+	helmet
 }
 
-@export var item_type: type_list
-@export var weight: int = 15
-@export var strongness: float = 10
-@export var slot_type: slot = slot.inventory
+# This slotâs role: "inventory", "helmet", "weapon", "body", "shield"
+@export var slot_type: slot_types = slot_types.inventory
 
-var shield_slot
-var body_slot
-var weapon_slot
-var helmet_slot
-
-var filled = false
-var equipped = false
 
 func _ready() -> void:
 	inv = get_tree().root.find_child("inventory", true, false)
-	shield_slot = inv.find_child("shield")
-	body_slot = inv.find_child("body")
-	weapon_slot = inv.find_child("weapon")
-	helmet_slot = inv.find_child("helmet")
-	button.pressed.connect(_on_item_clicked)
-	
-func _on_item_clicked():
-	print(shield_slot.filled)
-	if slot_type == slot.inventory:
-		_handle_inventory_clicked()
-	else: 
-		_handle_equipped_click()
+	button.pressed.connect(_on_click)
 
-func _handle_inventory_clicked():
-	match item_type:
-		type_list.body: 
-			if not body_slot.filled:
-				body_slot.fill_slot(item_display.texture, weight, type_list.body)
-				inv.update_inv(inv.total_weight+weight)
-				remove_slot()
-		type_list.helmet: 
-			if not helmet_slot.filled:
-				helmet_slot.fill_slot(item_display.texture, weight, type_list.helmet)
-				inv.update_inv(inv.total_weight+weight)
-				remove_slot()
-		type_list.food: 
-			inv.eat(strongness)
-			remove_slot()
-		type_list.weapon: 
-			if not weapon_slot.filled:
-				weapon_slot.fill_slot(item_display.texture, weight, type_list.weapon)
-				inv.update_inv(inv.total_weight+weight)
-				remove_slot()
-		type_list.shield: 
-			if not shield_slot.filled:
-				shield_slot.fill_slot(item_display.texture, weight, type_list.shield)
-				inv.update_inv(inv.total_weight+weight)
-				remove_slot()
 
-func _handle_equipped_click():
-	if inv.next_available_slot != null:
-			inv.inv_grid.get_child(inv.next_available_slot).fill_slot(item_display.texture, weight, item_type)
-			inv.update_inv(inv.total_weight+weight)
-			remove_slot()
+# ----------------------------------------------------------
+# PUBLIC METHODS
+# ----------------------------------------------------------
 
-func remove_slot():
+func fill_slot(new_item: ItemData) -> void:
+	item_data = new_item
+	item_display.texture = item_data.icon
+	filled = true
+
+
+func clear_slot() -> void:
 	item_display.texture = null
 	filled = false
-	inv.update_inv(inv.total_weight-weight)
-	weight = 0
+	equipped = false
+	item_data = null
+	inv._rescan_slots()
 
-func fill_slot(texture: Texture2D, new_weight, new_item_type):
-	item_display.texture = texture
-	weight = new_weight
-	filled = true
-	item_type = new_item_type
-	if slot_type == slot.inventory: equipped = false
-	else: equipped = true
+
+# ----------------------------------------------------------
+# CLICK HANDLING
+# ----------------------------------------------------------
+
+func _on_click() -> void:
+	if not filled:
+		return
+	print(slot_type)
+	if slot_type == slot_types.inventory:
+		_handle_inventory_click()
+	else:
+		_handle_equipment_click()
+
+
+# ----------------------------------------------------------
+# LOGIC: USING AN ITEM FROM INVENTORY
+# ----------------------------------------------------------
+
+func _handle_inventory_click() -> void:
+	match item_data.type:
+
+		"food":
+			# FOOD is consumed, goes directly to player
+			Global.hp_changed.emit(item_data.strongness)
+			_remove_from_inventory()
+			return
+
+		"helmet", "body", "weapon", "shield":
+			_equip_item()
+			return
+
+
+# ----------------------------------------------------------
+# LOGIC: CLICKING AN EQUIPPED ITEM (UNEQUIP)
+# ----------------------------------------------------------
+
+func _handle_equipment_click() -> void:
+	print(inv.next_available_slot)
+	if inv.next_available_slot != -1:
+		# Unequip to first free inventory slot
+		var target_slot = inv.inv_grid.get_child(inv.next_available_slot)
+		target_slot.fill_slot(item_data)
+		inv._update_weight_label()
+		inv._rescan_slots()
+		clear_slot()
+
+
+# ----------------------------------------------------------
+# INTERNAL HELPERS
+# ----------------------------------------------------------
+
+func _equip_item() -> void:
+	var target_slot: ItemSlot = _find_equipment_slot_for(item_data.type)
+
+	if not target_slot:
+		print("No matching equipment slot for item type:", item_data.type)
+		return
+
+	if target_slot.filled:
+		print("Slot already filled!")
+		return
+
+	# Move into the equipment slot
+	target_slot.fill_slot(item_data)
+	clear_slot()
+
+	# Weight stays the same since equipment still counts
+
+
+func _remove_from_inventory() -> void:
+	# Remove item entirely from inventory
+	inv.total_weight -= item_data.weight
+	inv._update_weight_label()
+	clear_slot()
+	inv._rescan_slots()
+
+
+func _find_equipment_slot_for(type_str: String) -> ItemSlot:
+	# Finds slot under inventory root
+	var node := inv.find_child(type_str, true, false)
+	print(node)
+	return node if node else null

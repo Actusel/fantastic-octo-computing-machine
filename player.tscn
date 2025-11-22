@@ -23,7 +23,8 @@ shader_parameter/tint_color = Color(0.7, 0.9, 1, 1)
 shader_parameter/tint_strength = 0.1
 shader_parameter/grain_strength = 0.05
 
-[node name="player" type="CharacterBody2D"]
+[node name="player" type="CharacterBody2D" groups=["player"]]
+collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_h8b4u")
 
@@ -53,6 +54,13 @@ offset_bottom = 54.0
 theme_override_styles/background = SubResource("StyleBoxFlat_hqtel")
 theme_override_styles/fill = SubResource("StyleBoxFlat_sweqy")
 value = 50.0
+show_percentage = false
+
+[node name="hp_label" type="Label" parent="ui"]
+offset_left = 713.0
+offset_top = 16.0
+offset_right = 913.0
+offset_bottom = 80.0
 
 [node name="ColorRect" type="ColorRect" parent="ui"]
 visible = false
