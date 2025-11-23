@@ -21,11 +21,13 @@ enum slot_types {
 
 # This slotâs role: "inventory", "helmet", "weapon", "body", "shield"
 @export var slot_type: slot_types = slot_types.inventory
+@export var emtpy_texture: Texture2D = null
 
 
 func _ready() -> void:
 	inv = get_tree().root.find_child("inventory", true, false)
 	button.pressed.connect(_on_click)
+	item_display.texture = emtpy_texture
 
 
 # ----------------------------------------------------------
@@ -39,7 +41,7 @@ func fill_slot(new_item: ItemData) -> void:
 
 
 func clear_slot() -> void:
-	item_display.texture = null
+	item_display.texture = emtpy_texture
 	filled = false
 	equipped = false
 	item_data = null

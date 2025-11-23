@@ -23331,5 +23331,5 @@ position = Vector2(523, 352)
 position = Vector2(659, 278)
 
 [node name="TurretEnemy" parent="." instance=ExtResource("20_3olq5")]
-position = Vector2(923, 458)
+position = Vector2(1067, 403)
 projectile_scene = ExtResource("21_15mne")

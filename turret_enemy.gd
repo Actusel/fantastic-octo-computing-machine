@@ -9,27 +9,31 @@ extends CharacterBody2D
 @onready var shoot_timer: Timer = $ShootTimer
 @onready var projectile_spawn: Marker2D = $ProjectileSpawn
 @onready var sprite: Sprite2D = $Sprite2D # Optional, for flipping
+@onready var backing_up_range: Area2D = $BackingUpRange
 
 # --- State Variables ---
 # This will hold a reference to the player when they are in range
 var player: CharacterBody2D = null 
 # A simple flag to control firing rate
 var can_shoot: bool = true
+var run:bool = false
 
 
 func _ready() -> void:
 	# Connect signals from code (alternative to using the Node tab)
 	detection_radius.body_entered.connect(_on_detection_radius_body_entered)
 	detection_radius.body_exited.connect(_on_detection_radius_body_exited)
+	backing_up_range.body_entered.connect(_on_backing_up_range_area_entered)
+	backing_up_range.body_exited.connect(_on_backing_up_range_area_exited)
 	shoot_timer.timeout.connect(_on_shoot_timer_timeout)
 	pass
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	# If we don't have a player target, do nothing.
 	if player == null:
 		return
-
+	
 	# --- Line of Sight (LOS) Logic ---
 	
 	# 1. Point the RayCast at the player
@@ -55,7 +59,11 @@ func _physics_process(delta: float) -> void:
 
 		# Try to shoot
 		shoot()
-	
+		
+		if run:
+			velocity = Vector2(1, 0).rotated(rotation)*-75
+			move_and_slide()
+		else: velocity = Vector2.ZERO
 	# If the ray *is* colliding, it means a wall is in the way.
 	# The code will do nothing, and the enemy won't shoot.
 
@@ -67,6 +75,7 @@ func shoot() -> void:
 
 	# Stop shooting and start the cooldown timer
 	can_shoot = false
+	shoot_timer.wait_time=0.5+randf()
 	shoot_timer.start()
 
 	# --- Instance and configure the projectile ---
@@ -104,3 +113,13 @@ func _on_detection_radius_body_exited(body: Node2D) -> void:
 func _on_shoot_timer_timeout() -> void:
 	# When the timer finishes, allow the enemy to shoot again
 	can_shoot = true
+
+func _on_backing_up_range_area_entered(body: Node2D) -> void:
+	if body == player:
+		run=true
+
+
+
+func _on_backing_up_range_area_exited(body) -> void:
+	if body == player:
+		run=false

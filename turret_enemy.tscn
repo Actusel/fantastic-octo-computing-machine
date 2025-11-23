@@ -1,23 +1,35 @@
-[gd_scene load_steps=5 format=3 uid="uid://hwgk002eroac"]
+[gd_scene load_steps=7 format=3 uid="uid://hwgk002eroac"]
 
 [ext_resource type="Texture2D" uid="uid://bmspdadwfumot" path="res://icon.svg" id="1_5nwje"]
 [ext_resource type="Script" uid="uid://cefb6wpr606ya" path="res://turret_enemy.gd" id="1_l1ivg"]
+[ext_resource type="Texture2D" uid="uid://cy3bx0yf2hrh" path="res://bow.png" id="3_82dk7"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_l1ivg"]
-size = Vector2(126, 128)
+[sub_resource type="CircleShape2D" id="CircleShape2D_8txk8"]
+radius = 24.083189
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_l1ivg"]
 radius = 489.8908
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_82dk7"]
+radius = 222.0
+
 [node name="TurretEnemy" type="CharacterBody2D"]
 collision_layer = 4
+motion_mode = 1
 script = ExtResource("1_l1ivg")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0, 0, 1)
+scale = Vector2(0.375, 0.375)
 texture = ExtResource("1_5nwje")
 
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+position = Vector2(24, 0)
+scale = Vector2(-1, -1)
+texture = ExtResource("3_82dk7")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_l1ivg")
+shape = SubResource("CircleShape2D_8txk8")
 
 [node name="DetectionRadius" type="Area2D" parent="."]
 collision_layer = 0
@@ -29,6 +41,14 @@ shape = SubResource("CircleShape2D_l1ivg")
 [node name="RayCast2D" type="RayCast2D" parent="."]
 
 [node name="ProjectileSpawn" type="Marker2D" parent="."]
+position = Vector2(25, 0)
 
 [node name="ShootTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="BackingUpRange" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BackingUpRange"]
+shape = SubResource("CircleShape2D_82dk7")
