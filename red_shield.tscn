@@ -1,17 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://brym6sporoaco"]
+[gd_scene load_steps=5 format=3 uid="uid://brym6sporoaco"]
 
 [ext_resource type="Script" uid="uid://vcjcqfpsao35" path="res://item.gd" id="1_0cgts"]
+[ext_resource type="Resource" uid="uid://cggo0mewbf2pm" path="res://red_shield.tres" id="2_cl4x3"]
 [ext_resource type="Texture2D" uid="uid://bb5q32ocercci" path="res://red_shield.png" id="2_ewtcv"]
-[ext_resource type="Script" uid="uid://bv3wxj82p0prm" path="res://item_data.gd" id="3_ewtcv"]
-
-[sub_resource type="Resource" id="Resource_cl4x3"]
-script = ExtResource("3_ewtcv")
-item_name = "red_shield"
-type = "shield"
-icon = ExtResource("2_ewtcv")
-weight = 15
-strongness = 10.0
-metadata/_custom_type_script = "uid://bv3wxj82p0prm"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ys7tt"]
 radius = 21.023796
@@ -19,7 +10,7 @@ radius = 21.023796
 [node name="item" type="Area2D" groups=["item"]]
 collision_mask = 2
 script = ExtResource("1_0cgts")
-item_data = SubResource("Resource_cl4x3")
+item_data = ExtResource("2_cl4x3")
 metadata/item = false
 
 [node name="visual" type="Sprite2D" parent="."]

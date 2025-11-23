@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3 uid="uid://cggo0mewbf2pm"]
+
+[ext_resource type="Texture2D" uid="uid://bb5q32ocercci" path="res://red_shield.png" id="1_opxfd"]
+[ext_resource type="Script" uid="uid://bv3wxj82p0prm" path="res://item_data.gd" id="2_afum4"]
+
+[resource]
+script = ExtResource("2_afum4")
+item_name = "red_shield"
+icon = ExtResource("1_opxfd")
+weight = 15
+strongness = 10.0
+metadata/_custom_type_script = "uid://bv3wxj82p0prm"

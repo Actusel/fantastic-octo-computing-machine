@@ -18,4 +18,4 @@ func lock(body):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta):
-	if inside: get_parent().queue_free()
+	if inside and Input.is_action_just_pressed("use"): get_parent().queue_free()

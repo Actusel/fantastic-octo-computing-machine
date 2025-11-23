@@ -19,9 +19,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	# Check if the body we hit is the player
-	if body.is_in_group("player"):
-		Global.hp_changed.emit(-damage)
+	if body.has_method("hp_changed"):
+		body.hp_changed(-damage)
 
 	# Destroy the projectile when it hits any physics body (player or wall)
 	# We put it in the "projectile" group to avoid this.

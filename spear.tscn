@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://c4e4vmgjbyk5j"]
+
+[ext_resource type="Script" uid="uid://vcjcqfpsao35" path="res://item.gd" id="1_m0qcn"]
+[ext_resource type="Resource" uid="uid://bbi1f0s3e6nmr" path="res://spear.tres" id="2_3bygj"]
+[ext_resource type="Texture2D" uid="uid://bb5q32ocercci" path="res://red_shield.png" id="3_7pgk8"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ys7tt"]
+radius = 21.023796
+
+[node name="item" type="Area2D" groups=["item"]]
+script = ExtResource("1_m0qcn")
+item_data = ExtResource("2_3bygj")
+metadata/item = false
+
+[node name="visual" type="Sprite2D" parent="."]
+texture = ExtResource("3_7pgk8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ys7tt")

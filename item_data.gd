@@ -9,6 +9,9 @@ class_name ItemData
 # Export a typed enum property. This shows a dropdown in the inspector.
 @export_enum("helmet", "body", "food", "weapon", "shield") var type: String = "food"
 
+@export_enum("short","long") var weapon_range: String = "short"
+@export var projectile_scene: PackedScene
+
 @export var icon: Texture2D
 @export var weight: int = 0
 @export var strongness: float = 0.0

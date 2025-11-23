@@ -1,5 +1,5 @@
 extends CharacterBody2D
-
+class_name TurretEnemy
 # Export the projectile scene so we can assign it in the Inspector
 @export var projectile_scene: PackedScene
 
@@ -10,6 +10,7 @@ extends CharacterBody2D
 @onready var projectile_spawn: Marker2D = $ProjectileSpawn
 @onready var sprite: Sprite2D = $Sprite2D # Optional, for flipping
 @onready var backing_up_range: Area2D = $BackingUpRange
+@onready var hp_bar: ProgressBar = $hp_bar
 
 # --- State Variables ---
 # This will hold a reference to the player when they are in range
@@ -28,6 +29,10 @@ func _ready() -> void:
 	shoot_timer.timeout.connect(_on_shoot_timer_timeout)
 	pass
 
+func hp_changed(amount):
+	hp_bar.value+=amount
+	if hp_bar.value==0:
+		queue_free()
 
 func _physics_process(_delta: float) -> void:
 	# If we don't have a player target, do nothing.

@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bgstnt0syqkyr" path="res://inv_slot.tscn" id="1_noaob"]
 
 [node name="inventory" type="Control"]
+visible = false
 clip_contents = true
 custom_minimum_size = Vector2(400, 400)
 layout_mode = 3
