@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cy3bx0yf2hrh" path="res://bow.png" id="2_1jxqw"]
 [ext_resource type="Texture2D" uid="uid://bmspdadwfumot" path="res://icon.svg" id="2_hbytn"]
 [ext_resource type="PackedScene" uid="uid://es0e4a6qd357" path="res://player_projectile.tscn" id="3_dw050"]
-[ext_resource type="Shader" path="res://player_filter.gdshader" id="3_xnw5g"]
+[ext_resource type="Shader" uid="uid://bmvtc1kskp8hg" path="res://player_filter.gdshader" id="3_xnw5g"]
 [ext_resource type="Script" uid="uid://bv3wxj82p0prm" path="res://item_data.gd" id="4_b26j0"]
 [ext_resource type="PackedScene" uid="uid://bwcbmf0rxlijt" path="res://inv.tscn" id="4_hqtel"]
 
@@ -56,7 +56,7 @@ scale = Vector2(0.25, 0.25)
 shape = SubResource("RectangleShape2D_hdkpf")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(1.4, 1.4)
+zoom = Vector2(3, 3)
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 
