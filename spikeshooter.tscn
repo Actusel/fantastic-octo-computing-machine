@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://bjwxya47jfo4j"]
+
+[ext_resource type="Texture2D" uid="uid://bmspdadwfumot" path="res://icon.svg" id="1_ke6an"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xpccc"]
+radius = 489.8908
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gclud"]
+radius = 24.083189
+
+[node name="Spikeshooter" type="CharacterBody2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0, 0, 1)
+scale = Vector2(0.375, 0.375)
+texture = ExtResource("1_ke6an")
+
+[node name="DetectionRadius" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionRadius"]
+shape = SubResource("CircleShape2D_xpccc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_gclud")

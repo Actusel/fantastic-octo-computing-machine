@@ -56,7 +56,7 @@ scale = Vector2(0.25, 0.25)
 shape = SubResource("RectangleShape2D_hdkpf")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(3, 3)
+zoom = Vector2(0.3, 0.3)
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 
