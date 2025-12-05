@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name TurretEnemy
 # Export the projectile scene so we can assign it in the Inspector
-@export var projectile_scene: PackedScene
+@export var projectile_scene: PackedScene = preload("res://enemy_projectile.tscn")
 
 # --- Node References ---
 @onready var detection_radius: Area2D = $DetectionRadius

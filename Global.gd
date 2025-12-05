@@ -2,6 +2,8 @@ extends Node
 
 signal game_started
 
+var level = 1
+
 var graph_data := {} 
 var stamina = 0.0
 var leg = 0.0

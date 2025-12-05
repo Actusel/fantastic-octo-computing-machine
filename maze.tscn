@@ -1,15 +1,22 @@
-[gd_scene load_steps=4 format=3 uid="uid://dmaqhqc1fhvow"]
+[gd_scene load_steps=7 format=3 uid="uid://dmaqhqc1fhvow"]
 
 [ext_resource type="Script" uid="uid://cb5b8ws0vgh0w" path="res://maze_gen.gd" id="1_h41xc"]
+[ext_resource type="PackedScene" uid="uid://hwgk002eroac" path="res://turret_enemy.tscn" id="2_pgab2"]
 [ext_resource type="TileSet" uid="uid://bglusbms4dpqd" path="res://walls.tres" id="2_u11kd"]
+[ext_resource type="PackedScene" uid="uid://b57ut7t2odqej" path="res://melee_enemy.tscn" id="3_mjrf4"]
 [ext_resource type="PackedScene" uid="uid://bg066a1w7o83j" path="res://player.tscn" id="3_u11kd"]
+[ext_resource type="PackedScene" uid="uid://bjwxya47jfo4j" path="res://spike_shooter_enemy.tscn" id="4_nw8dj"]
 
 [node name="Node2D" type="Node2D"]
 
 [node name="MazeGen" type="Node2D" parent="."]
 script = ExtResource("1_h41xc")
+turret_enemy_scene = ExtResource("2_pgab2")
+melee_enemy_scene = ExtResource("3_mjrf4")
+spike_shooter_enemy_scene = ExtResource("4_nw8dj")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
+z_index = -1
 tile_set = ExtResource("2_u11kd")
 
 [node name="player" parent="." instance=ExtResource("3_u11kd")]
