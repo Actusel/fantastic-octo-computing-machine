@@ -9,13 +9,12 @@ extends Node2D
 		maze_size = value
 		if maze_size.x < 2: maze_size.x = 2
 		if maze_size.y < 2: maze_size.y = 2
-
-@export var corridor_width: int = 5
-@export var wall_thickness: int = 1
+@export var corridor_width: int = 10
+@export var wall_thickness: int = 3
 
 @export_category("Tile Configuration")
 @export var source_id: int = 8
-@export var wall_atlas_coords: Vector2i = Vector2i(17, 1)
+@export var wall_atlas_coords: Vector2i = Vector2i(17, 3)
 @export var floor_atlas_coords: Vector2i = Vector2i(1, 5)
 @export var start_atlas_coords: Vector2i = Vector2i(10, 9)
 @export var end_atlas_coords: Vector2i = Vector2i(14, 8)
@@ -28,6 +27,7 @@ extends Node2D
 @export_range(0.0, 1.0) var spawn_chance: float = 0.1
 
 # --- State ---
+var level = maze_size.x
 var _visited: Dictionary = {}
 var _stack: Array[Vector2i] = []
 var _goal_area: Area2D = null
@@ -39,7 +39,7 @@ func _ready() -> void:
 	if not tile_map_layer or not player:
 		push_error("MazeGenerator: Please assign TileMapLayer AND Player in inspector.")
 		return
-	
+	Global.level = level
 	# Create a container for enemies to make cleanup easier
 	_enemies_container = Node2D.new()
 	_enemies_container.name = "EnemiesContainer"

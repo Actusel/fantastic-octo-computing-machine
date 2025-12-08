@@ -9,14 +9,14 @@ extends CharacterBody2D
 
 var player: CharacterBody2D = null 
 # A simple flag to control firing rate
-var can_shoot: bool = true
+var can_shoot: bool = false
 
 
 
 func _ready() -> void:
 	detection_radius.body_entered.connect(_on_detection_radius_body_entered)
 	detection_radius.body_exited.connect(_on_detection_radius_body_exited)
-	
+	shoot_timer.start()
 	shoot_timer.timeout.connect(_on_shoot_timer_timeout)
 
 

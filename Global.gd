@@ -2,7 +2,7 @@ extends Node
 
 signal game_started
 
-var level = 1
+var level: int
 
 var graph_data := {} 
 var stamina = 0.0

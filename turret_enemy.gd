@@ -16,7 +16,7 @@ class_name TurretEnemy
 # This will hold a reference to the player when they are in range
 var player: CharacterBody2D = null 
 # A simple flag to control firing rate
-var can_shoot: bool = true
+var can_shoot: bool = false
 var run:bool = false
 
 
@@ -26,6 +26,7 @@ func _ready() -> void:
 	detection_radius.body_exited.connect(_on_detection_radius_body_exited)
 	backing_up_range.body_entered.connect(_on_backing_up_range_area_entered)
 	backing_up_range.body_exited.connect(_on_backing_up_range_area_exited)
+	shoot_timer.start()
 	shoot_timer.timeout.connect(_on_shoot_timer_timeout)
 	pass
 

@@ -14,6 +14,7 @@ class_name Player
 @onready var player_sprite: Sprite2D = $PlayerSprite
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var projectile_spawn: Marker2D = $ProjectileSpawn
+@onready var maze_gen: Node2D = $"../MazeGen"
 
 
 @export var weapon: ItemData = null
@@ -38,7 +39,13 @@ func _ready() -> void:
 func hp_changed(amount):
 	if not (amount<0 and dashing):
 		hp_bar.value+=amount
-		hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
+		
+	
+	if hp_bar.value <=0:
+		hp_bar.value = hp_bar.max_value
+		maze_gen.generate_maze()
+	
+	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
 
 func max_hp_changed(amount):
 	var new_hp = hp_bar.value+amount
