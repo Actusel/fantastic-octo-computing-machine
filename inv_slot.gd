@@ -63,8 +63,32 @@ func _on_click() -> void:
 		_handle_equipment_click()
 
 func _on_item_drop() -> void:
-	pass
+	if not filled:
+		return
 
+	# Ground item scene
+	var ground_item_scene := preload("uid://dwbqxt7i8lf4j")  # <-- your path
+	var ground_item := ground_item_scene.instantiate()
+
+	# Assign resource data
+	ground_item.item_data = item_data
+
+	# Spawn at player position
+	var player = inv.player
+	if player:
+		ground_item.global_position = player.global_position
+	else:
+		push_warning("Player not found. Dropping item at slot position.")
+		ground_item.global_position = global_position
+
+	# Add to world
+	get_tree().current_scene.add_child(ground_item)
+
+	# Remove from inventory slot
+	inv.total_weight -= item_data.weight
+	inv._update_weight_label()
+	clear_slot()
+	inv._rescan_slots()
 
 # ----------------------------------------------------------
 # LOGIC: USING AN ITEM FROM INVENTORY

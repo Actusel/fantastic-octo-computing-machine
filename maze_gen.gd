@@ -4,7 +4,7 @@ extends Node2D
 @export_category("Maze Settings")
 @onready var tile_map_layer: TileMapLayer = $"../TileMapLayer"
 @onready var player: Player = $"../player"
-@export var maze_size: Vector2i = Vector2i(5, 5): # Starting size
+@export var maze_size: Vector2i = Vector2i(4, 4): # Starting size
 	set(value):
 		maze_size = value
 		if maze_size.x < 2: maze_size.x = 2
@@ -16,8 +16,8 @@ extends Node2D
 @export var source_id: int = 8
 @export var wall_atlas_coords: Vector2i = Vector2i(17, 3)
 @export var floor_atlas_coords: Vector2i = Vector2i(1, 5)
-@export var start_atlas_coords: Vector2i = Vector2i(10, 9)
-@export var end_atlas_coords: Vector2i = Vector2i(14, 8)
+@export var start_atlas_coords: Vector2i = floor_atlas_coords
+@export var end_atlas_coords: Vector2i = Vector2i(1, 23)
 
 
 @export_category("Enemies")
@@ -27,24 +27,27 @@ extends Node2D
 @export_range(0.0, 1.0) var spawn_chance: float = 0.1
 
 # --- State ---
-var level = maze_size.x
 var _visited: Dictionary = {}
 var _stack: Array[Vector2i] = []
 var _goal_area: Area2D = null
 var _enemies_container: Node2D = null
 var _start_pos: Vector2i = Vector2i(-1, -1)
 var _end_pos: Vector2i = Vector2i(-1, -1)
+const door_scene = preload("uid://bcgit45sqlnrj")
+var door = null
 
 func _ready() -> void:
 	if not tile_map_layer or not player:
 		push_error("MazeGenerator: Please assign TileMapLayer AND Player in inspector.")
 		return
-	Global.level = level
+	if not Global.level:
+		Global.level = maze_size.x
 	# Create a container for enemies to make cleanup easier
 	_enemies_container = Node2D.new()
 	_enemies_container.name = "EnemiesContainer"
 	add_child(_enemies_container)
 	
+	print(Global.level % 5)
 	# Generate the first level
 	generate_maze()
 
@@ -163,25 +166,31 @@ func _create_goal_trigger(logical_pos: Vector2i) -> void:
 	var center_tile = _get_center_tile_of_room(logical_pos)
 	var world_pos = tile_map_layer.map_to_local(center_tile)
 	
-	# Create Area2D programmatically
-	_goal_area = Area2D.new()
-	_goal_area.name = "GoalArea"
-	_goal_area.collision_mask = 2
-	add_child(_goal_area)
-	_goal_area.global_position = world_pos
-	
-	# Create Collision Shape
-	var shape = CollisionShape2D.new()
-	var rect = RectangleShape2D.new()
-	
-	# Size the trigger to be roughly the size of the 5x5 room
-	var tile_size = tile_map_layer.tile_set.tile_size
-	rect.size = Vector2(corridor_width * tile_size.x, corridor_width * tile_size.y)
-	shape.shape = rect
-	_goal_area.add_child(shape)
-	
-	# Connect signal
-	_goal_area.body_entered.connect(_on_goal_reached)
+	if Global.level % 5:
+		# Create Area2D programmatically
+		_goal_area = Area2D.new()
+		_goal_area.name = "GoalArea"
+		_goal_area.collision_mask = 2
+		add_child(_goal_area)
+		_goal_area.global_position = world_pos
+		
+		# Create Collision Shape
+		var shape = CollisionShape2D.new()
+		var rect = RectangleShape2D.new()
+		
+		# Size the trigger to be roughly the size of the 5x5 room
+		var tile_size = tile_map_layer.tile_set.tile_size
+		rect.size = Vector2(corridor_width * tile_size.x, corridor_width * tile_size.y)
+		shape.shape = rect
+		_goal_area.add_child(shape)
+		
+		# Connect signal
+		_goal_area.body_entered.connect(_on_goal_reached)
+	else:
+		door = door_scene.instantiate()
+		door.collision_mask = 2
+		add_child(door)
+		door.global_position = world_pos
 
 func _on_goal_reached(body: Node2D) -> void:
 	if body == player:
@@ -190,6 +199,7 @@ func _on_goal_reached(body: Node2D) -> void:
 func _level_up() -> void:
 	print("Level Complete! Increasing size...")
 	maze_size += Vector2i(1, 1)
+	Global.level += 1
 	generate_maze()
 
 # --- Helper Math ---

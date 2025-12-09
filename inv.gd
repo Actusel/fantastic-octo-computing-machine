@@ -3,6 +3,8 @@ extends Control
 @onready var inv_grid: GridContainer = $CenterContainer/GridContainer
 @onready var label: Label = $weight
 
+var player = null
+
 const INV_SLOT = preload("uid://bgstnt0syqkyr")
 
 var total_slots: int = 3
@@ -17,6 +19,7 @@ var available_slots: int = 0
 # INITIALIZATION
 # ---------------------------------------------------------
 func _ready() -> void:
+	player = get_tree().root.find_child("player", true, false)
 	_update_stats()
 	_initialize_slots()
 	_update_weight_label()

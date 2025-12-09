@@ -21,12 +21,12 @@ func _ready():
 
 
 func _on_body_enter(body):
-	if body.name == "player":
+	if body.is_in_group("player"):
 		inside = true
 
 
 func _on_body_exit(body):
-	if body.name == "player":
+	if body.is_in_group("player"):
 		inside = false
 
 
