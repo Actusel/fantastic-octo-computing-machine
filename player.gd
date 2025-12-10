@@ -43,7 +43,8 @@ func hp_changed(amount):
 	
 	if hp_bar.value <=0:
 		hp_bar.value = hp_bar.max_value
-		maze_gen.generate_maze()
+		if maze_gen:
+			maze_gen.generate_maze()
 	
 	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
 

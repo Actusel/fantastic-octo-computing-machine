@@ -40,18 +40,17 @@ func _ready() -> void:
 	if not tile_map_layer or not player:
 		push_error("MazeGenerator: Please assign TileMapLayer AND Player in inspector.")
 		return
-	if not Global.level:
-		Global.level = maze_size.x
 	# Create a container for enemies to make cleanup easier
 	_enemies_container = Node2D.new()
 	_enemies_container.name = "EnemiesContainer"
 	add_child(_enemies_container)
 	
-	print(Global.level % 5)
 	# Generate the first level
 	generate_maze()
 
 func generate_maze() -> void:
+	if Global.level: maze_size = Vector2(Global.level, Global.level)
+	
 	print("Generating Level: ", maze_size)
 	
 	# Cleanup previous level artifacts
