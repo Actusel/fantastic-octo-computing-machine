@@ -11,6 +11,7 @@ enum Stage { STAGE_1, TRANSITION, STAGE_2 }
 var current_stage = Stage.STAGE_1
 var max_hp: float = 1000.0
 var current_hp: float = 1000.0
+var dash_duration = 0.6
 
 # --- Timer References (Add these nodes as children of the Boss) ---
 @onready var attack_timer = $AttackTimer
@@ -95,6 +96,7 @@ func _on_attack_timer_timeout():
 		# Move randomly before attacking in Stage 2
 		dash_randomly()
 		
+		await get_tree().create_timer(dash_duration).timeout
 		var roll = randi() % 3
 		match roll:
 			0: attack_rain()
@@ -204,7 +206,7 @@ func dash_randomly():
 	
 	if movement_tween: movement_tween.kill()
 	movement_tween = create_tween()	
-	movement_tween.tween_property(self, "global_position", target, 0.6).set_trans(Tween.TRANS_ELASTIC)
+	movement_tween.tween_property(self, "global_position", target, dash_duration).set_trans(Tween.TRANS_ELASTIC)
 
 
 func spawn_bullet(pos: Vector2, dir: Vector2, speed: float, mode_info = {}) -> Node:
