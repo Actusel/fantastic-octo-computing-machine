@@ -5,7 +5,8 @@
 
 [resource]
 script = ExtResource("2_afum4")
-item_name = "red_shield"
+item_name = "red shield"
+type = "shield"
 icon = ExtResource("1_opxfd")
 weight = 15
 strongness = 10.0

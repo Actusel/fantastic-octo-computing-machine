@@ -30,7 +30,7 @@ texture = ExtResource("4_ftt1q")
 shape = SubResource("CircleShape2D_gr3ps")
 
 [node name="AttackTimer" type="Timer" parent="."]
-wait_time = 3.0
+wait_time = 4.0
 
 [node name="hp_bar" type="ProgressBar" parent="." groups=["enemy"]]
 anchors_preset = 8

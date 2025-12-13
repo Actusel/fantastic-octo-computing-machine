@@ -75,13 +75,12 @@ func start_transition():
 	# 3. Start Stage 2
 	current_stage = Stage.STAGE_2
 	# Stage 2 is faster
-	attack_timer.wait_time = 3.0
 	attack_timer.start()
 
 # --- Attack Management ---
 func start_attack_cycle():
 	attack_timer.timeout.connect(_on_attack_timer_timeout)
-	attack_timer.start(3.0) # Slower in Stage 1
+	attack_timer.start()
 
 func _on_attack_timer_timeout():
 	if current_stage == Stage.STAGE_1:
@@ -226,5 +225,6 @@ func spawn_bullet(pos: Vector2, dir: Vector2, speed: float, mode_info = {}) -> N
 	return b
 
 func die():
-	# Add explosion particles here
+	Global.level+=1
+	get_tree().change_scene_to_file("res://maze.tscn")
 	queue_free()

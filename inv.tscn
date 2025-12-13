@@ -73,7 +73,7 @@ offset_right = 255.0
 offset_bottom = 92.0
 slot_type = 3
 
-[node name="shield" parent="." instance=ExtResource("1_noaob")]
+[node name="offhand" parent="." instance=ExtResource("1_noaob")]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 44.0

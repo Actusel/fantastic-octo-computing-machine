@@ -55,12 +55,19 @@ func max_hp_changed(amount):
 	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
 
 func change_weapon(new_weapon: ItemData ):
+	if new_weapon == null:
+		return
+		
 	weapon=new_weapon
 	weapon_sprite.texture = weapon.icon
 	damage = weapon.strongness
 	if weapon.weapon_range == "long": weapon_sprite.visible = true
 	else: weapon_sprite.visible = false
 	
+func clear_weapon():
+	weapon = null
+	weapon_sprite.texture = null
+	weapon_sprite.visible = false
 
 func dash_indicator():
 	if dash_cooldown.time_left: return snapped(dash_cooldown.time_left,.01) 
@@ -73,7 +80,7 @@ func _physics_process(delta):
 	var direction = Input.get_vector("moveleft","moveright","moveup","movedown")
 	label.set_text(str(dash_indicator()))
 	
-	if Input.is_action_pressed("attack"): # This is a temporary solution to get both enemy and player attacks up and working.
+	if Input.is_action_pressed("attack") and weapon: # This is a temporary solution to get both enemy and player attacks up and working.
 		if weapon.weapon_range == "long": 
 			shoot()
 		else:
@@ -106,6 +113,12 @@ func shoot() -> void:
 	# Only shoot if the timer is ready and we have a projectile scene
 	if not can_attack or weapon.projectile_scene == null:
 		return
+		
+	var offhand = inventory.find_child("offhand", true, false)
+	if not offhand or not offhand.item_data or offhand.item_data.type != "arrow":
+		return
+
+	offhand._consume_from_stack(1)
 
 	# Stop shooting and start the cooldown timer
 	can_attack = false

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://72fkh0sj4trh"]
+
+[ext_resource type="Script" uid="uid://vcjcqfpsao35" path="res://item.gd" id="1_2ndhl"]
+[ext_resource type="Resource" uid="uid://c6q7jrc0mm5qr" path="res://arrow.tres" id="2_acd0x"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ys7tt"]
+radius = 21.023796
+
+[node name="arrow" type="Area2D" groups=["item"]]
+collision_mask = 2
+script = ExtResource("1_2ndhl")
+item_data = ExtResource("2_acd0x")
+metadata/item = false
+
+[node name="visual" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ys7tt")

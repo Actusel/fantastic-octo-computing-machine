@@ -49,7 +49,10 @@ func _ready() -> void:
 	generate_maze()
 
 func generate_maze() -> void:
-	if Global.level: maze_size = Vector2(Global.level, Global.level)
+	if Global.level: 
+		maze_size = Vector2(Global.level, Global.level)
+	else:
+		Global.level = maze_size.x
 	
 	print("Generating Level: ", maze_size)
 	
@@ -197,7 +200,6 @@ func _on_goal_reached(body: Node2D) -> void:
 
 func _level_up() -> void:
 	print("Level Complete! Increasing size...")
-	maze_size += Vector2i(1, 1)
 	Global.level += 1
 	generate_maze()
 

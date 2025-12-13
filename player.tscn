@@ -1,20 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://bg066a1w7o83j"]
+[gd_scene load_steps=10 format=3 uid="uid://bg066a1w7o83j"]
 
 [ext_resource type="Script" uid="uid://bg6b3cxqn4er2" path="res://player.gd" id="1_h8b4u"]
-[ext_resource type="Texture2D" uid="uid://cy3bx0yf2hrh" path="res://bow.png" id="2_1jxqw"]
 [ext_resource type="Texture2D" uid="uid://bmspdadwfumot" path="res://icon.svg" id="2_hbytn"]
-[ext_resource type="PackedScene" uid="uid://es0e4a6qd357" path="res://player_projectile.tscn" id="3_dw050"]
 [ext_resource type="Shader" uid="uid://bmvtc1kskp8hg" path="res://player_filter.gdshader" id="3_xnw5g"]
-[ext_resource type="Script" uid="uid://bv3wxj82p0prm" path="res://item_data.gd" id="4_b26j0"]
 [ext_resource type="PackedScene" uid="uid://bwcbmf0rxlijt" path="res://inv.tscn" id="4_hqtel"]
-
-[sub_resource type="Resource" id="Resource_n7ghd"]
-script = ExtResource("4_b26j0")
-type = "weapon"
-weapon_range = "long"
-projectile_scene = ExtResource("3_dw050")
-icon = ExtResource("2_1jxqw")
-metadata/_custom_type_script = "uid://bv3wxj82p0prm"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hdkpf"]
 size = Vector2(106, 106)
@@ -41,7 +30,6 @@ size = Vector2(43.546875, 53)
 collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_h8b4u")
-weapon = SubResource("Resource_n7ghd")
 
 [node name="PlayerSprite" type="Sprite2D" parent="."]
 scale = Vector2(0.25, 0.25)

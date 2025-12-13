@@ -45,31 +45,68 @@ func _initialize_slots() -> void:
 # ---------------------------------------------------------
 # INVENTORY MANAGEMENT
 # ---------------------------------------------------------
-func add_to_inventory(item_data: ItemData) -> void:
-	var weight := item_data.weight
-	var new_weight := total_weight + weight
+func add_to_inventory(item_data: ItemData, amount: int = 1) -> void:
+	var remaining := amount
 
-	if next_available_slot == -1:
-		print("No inventory space!")
-		return
+	# -------------------------------------------------
+	# 1) STACK INTO EXISTING SLOTS FIRST
+	# -------------------------------------------------
+	if item_data.max_stack > 1:
+		for slot in inv_grid.get_children():
+			if not slot.filled:
+				continue
 
-	if new_weight > max_weight:
-		print("Too heavy!")
-		return
+			if slot.item_data != item_data:
+				continue
 
-	var slot := inv_grid.get_child(next_available_slot)
-	slot.fill_slot(item_data)
+			var space = item_data.max_stack - slot.stack_count
+			if space <= 0:
+				continue
 
-	total_weight = new_weight
-	_update_weight_label()
+			var to_add = min(space, remaining)
+			slot.stack_count += to_add
+			remaining -= to_add
 
-	# Refresh available slot data AFTER adding
+			total_weight += item_data.weight * to_add
+			_update_weight_label()
+
+			if remaining == 0:
+				_rescan_slots()
+				return
+
+	# -------------------------------------------------
+	# 2) PLACE INTO EMPTY SLOTS
+	# -------------------------------------------------
+	for slot in inv_grid.get_children():
+		if remaining == 0:
+			break
+
+		if slot.filled:
+			continue
+
+		# Weight check PER SLOT placement
+		var to_place = min(item_data.max_stack, remaining)
+		var added_weight = item_data.weight * to_place
+
+		if total_weight + added_weight > max_weight:
+			print("Too heavy!")
+			break
+
+		slot.fill_slot(item_data)
+		slot.stack_count = to_place
+
+		total_weight += added_weight
+		remaining -= to_place
+		_update_weight_label()
+
+	# -------------------------------------------------
+	# 3) FINALIZE
+	# -------------------------------------------------
+	if remaining > 0:
+		print("Inventory full, leftover:", remaining)
+
 	_rescan_slots()
 
-
-func drop_from_inventory(_item_data: ItemData) -> void:
-	# Implement later: spawn the world pickup
-	pass
 
 
 # ---------------------------------------------------------

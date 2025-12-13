@@ -8,5 +8,6 @@ script = ExtResource("2_4uyhs")
 item_name = "Spear"
 type = "weapon"
 icon = ExtResource("1_04py3")
+weight = 30
 strongness = 15.0
 metadata/_custom_type_script = "uid://bv3wxj82p0prm"
