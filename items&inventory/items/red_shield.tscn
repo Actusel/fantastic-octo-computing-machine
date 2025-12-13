@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://brym6sporoaco"]
+
+[ext_resource type="Script" uid="uid://vcjcqfpsao35" path="res://items&inventory/item.gd" id="1_0cgts"]
+[ext_resource type="Resource" uid="uid://cggo0mewbf2pm" path="res://items&inventory/items/red_shield.tres" id="2_cl4x3"]
+[ext_resource type="Texture2D" uid="uid://bb5q32ocercci" path="res://assets/red_shield.png" id="2_ewtcv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ys7tt"]
+radius = 21.023796
+
+[node name="RedShield" type="Area2D" groups=["item"]]
+collision_mask = 2
+script = ExtResource("1_0cgts")
+item_data = ExtResource("2_cl4x3")
+metadata/item = false
+
+[node name="visual" type="Sprite2D" parent="."]
+texture = ExtResource("2_ewtcv")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ys7tt")

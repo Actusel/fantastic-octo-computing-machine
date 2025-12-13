@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://bcgit45sqlnrj"]
+
+[ext_resource type="Script" uid="uid://benc3a3ahu3c5" path="res://environments/props/door.gd" id="1_0l2c3"]
+[ext_resource type="Texture2D" uid="uid://bn2r4ens6q4c8" path="res://assets/prison.png" id="1_123ng"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hupno"]
+size = Vector2(48, 12)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v6xrn"]
+radius = 24.0
+height = 60.0
+
+[node name="door" type="StaticBody2D"]
+z_index = 1
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 42)
+shape = SubResource("RectangleShape2D_hupno")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_123ng")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_mask = 2
+script = ExtResource("1_0l2c3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, 43)
+shape = SubResource("CapsuleShape2D_v6xrn")

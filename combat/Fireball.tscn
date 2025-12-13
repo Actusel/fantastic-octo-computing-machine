@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://fhc4qukwrrh8"]
+
+[ext_resource type="Script" uid="uid://c4aowns881rh" path="res://combat/advanced_projectile.gd" id="1_yt8ms"]
+[ext_resource type="Texture2D" uid="uid://bfi42tfwcpd1r" path="res://assets/tiles/32626-a8f3c413446f03e3eb740f8381a2b77a.png" id="2_6mhiu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_llehy"]
+atlas = ExtResource("2_6mhiu")
+region = Rect2(528, 1.5, 48, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qxf0c"]
+size = Vector2(28, 22)
+
+[node name="Bullet" type="Area2D"]
+collision_layer = 8
+collision_mask = 3
+script = ExtResource("1_yt8ms")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = -1.5707964
+scale = Vector2(0.5, 0.5)
+texture = SubResource("AtlasTexture_llehy")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2.5, -2.3841858e-07)
+rotation = 1.5707964
+scale = Vector2(0.5, 0.5)
+shape = SubResource("RectangleShape2D_qxf0c")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(24, -3)
+rotation = 1.5707964
+scale = Vector2(0.5, 0.5)
+rect = Rect2(-8.054915, 31.716248, 28.102966, 22.178566)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

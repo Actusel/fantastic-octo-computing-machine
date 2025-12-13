@@ -1,0 +1,85 @@
+[gd_scene load_steps=11 format=3 uid="uid://b57ut7t2odqej"]
+
+[ext_resource type="Texture2D" uid="uid://bmspdadwfumot" path="res://assets/icon.svg" id="1_otv3p"]
+[ext_resource type="Script" uid="uid://pq8gromuo0og" path="res://entities/enemies/melee_enemy.gd" id="1_vn61j"]
+[ext_resource type="Texture2D" uid="uid://blcesbt6kmxbg" path="res://assets/long_arrow.png" id="2_kj6g3"]
+[ext_resource type="Script" uid="uid://bv3wxj82p0prm" path="res://items&inventory/item_data.gd" id="3_j2cp2"]
+
+[sub_resource type="Resource" id="Resource_kj6g3"]
+script = ExtResource("3_j2cp2")
+type = "weapon"
+icon = ExtResource("2_kj6g3")
+strongness = 15.0
+metadata/_custom_type_script = "uid://bv3wxj82p0prm"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vn61j"]
+radius = 26.019224
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_legso"]
+radius = 489.8908
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kj6g3"]
+size = Vector2(56.75, 74)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kj6g3"]
+bg_color = Color(0, 0, 0, 0.4627451)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j2cp2"]
+bg_color = Color(0.9764706, 0, 0, 1)
+
+[node name="MeleeEnemy" type="CharacterBody2D"]
+collision_layer = 4
+motion_mode = 1
+wall_min_slide_angle = 0.0
+script = ExtResource("1_vn61j")
+weapon_data = SubResource("Resource_kj6g3")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0, 0, 1)
+scale = Vector2(0.375, 0.375)
+texture = ExtResource("1_otv3p")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_vn61j")
+
+[node name="DetectionRadius" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionRadius"]
+shape = SubResource("CircleShape2D_legso")
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+
+[node name="MeleeArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MeleeArea"]
+position = Vector2(44, 1)
+shape = SubResource("RectangleShape2D_kj6g3")
+
+[node name="AttackTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="WeaponSprite" type="Sprite2D" parent="."]
+scale = Vector2(-1, -1)
+offset = Vector2(-32, 0)
+
+[node name="hp_bar" type="ProgressBar" parent="." groups=["enemy"]]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -36.0
+offset_top = -40.0
+offset_right = 156.0
+offset_bottom = -13.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.375, 0.375)
+theme_override_styles/background = SubResource("StyleBoxFlat_kj6g3")
+theme_override_styles/fill = SubResource("StyleBoxFlat_j2cp2")
+value = 100.0
+show_percentage = false

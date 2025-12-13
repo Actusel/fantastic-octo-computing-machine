@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://qc8qcckb3mn0"]
+
+[ext_resource type="Script" uid="uid://vcjcqfpsao35" path="res://items&inventory/item.gd" id="1_wx1mq"]
+[ext_resource type="Resource" uid="uid://ce6otr60yuqpj" path="res://items&inventory/items/wine.tres" id="2_kgna8"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ys7tt"]
+radius = 21.023796
+
+[node name="wine" type="Area2D" groups=["item"]]
+collision_mask = 2
+script = ExtResource("1_wx1mq")
+item_data = ExtResource("2_kgna8")
+metadata/item = false
+
+[node name="visual" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ys7tt")

@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccaahr7a1q686"]
+
+[ext_resource type="Script" uid="uid://dgkcy0fx8rcc" path="res://combat/laser_beam.gd" id="1_t1d0h"]
+
+[node name="LaserBeam" type="RayCast2D"]
+enabled = false
+target_position = Vector2(2000, 0)
+collision_mask = 3
+script = ExtResource("1_t1d0h")
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(0, 0, 100, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
