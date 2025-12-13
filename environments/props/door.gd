@@ -18,4 +18,4 @@ func lock(body):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta):
 	if player and Input.is_action_just_pressed("use"): 
-		get_tree().change_scene_to_file("res://boss_room.tscn")
+		get_tree().change_scene_to_file("res://environments/boss_room.tscn")

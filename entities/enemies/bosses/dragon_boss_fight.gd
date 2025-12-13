@@ -226,5 +226,5 @@ func spawn_bullet(pos: Vector2, dir: Vector2, speed: float, mode_info = {}) -> N
 
 func die():
 	Global.level+=1
-	get_tree().change_scene_to_file("res://maze.tscn")
+	get_tree().change_scene_to_file("res://environments/maze.tscn")
 	queue_free()
