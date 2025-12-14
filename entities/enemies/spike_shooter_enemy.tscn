@@ -15,7 +15,7 @@ bg_color = Color(0, 0, 0, 0.4627451)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u4cjt"]
 bg_color = Color(0.9764706, 0, 0, 1)
 
-[node name="SpikeShooterEnemy" type="CharacterBody2D"]
+[node name="SpikeShooterEnemy" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 4
 motion_mode = 1
 script = ExtResource("1_0qun3")
@@ -58,3 +58,4 @@ wait_time = 2.5
 one_shot = true
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
+collision_mask = 17

@@ -14,7 +14,7 @@ bg_color = Color(0, 0, 0, 0.4627451)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ftt1q"]
 bg_color = Color(0.9764706, 0, 0, 1)
 
-[node name="DragonBossFight" type="CharacterBody2D"]
+[node name="DragonBossFight" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 4
 motion_mode = 1
 script = ExtResource("1_gr3ps")

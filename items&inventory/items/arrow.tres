@@ -14,5 +14,5 @@ type = "arrow"
 icon = SubResource("AtlasTexture_unjj8")
 weight = 2
 strongness = 10.0
-max_stack = 10
+max_stack = 20
 metadata/_custom_type_script = "uid://bv3wxj82p0prm"

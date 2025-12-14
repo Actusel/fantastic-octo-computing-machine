@@ -74,6 +74,7 @@ func start_transition():
 	
 	# 3. Start Stage 2
 	current_stage = Stage.STAGE_2
+	dash_randomly()
 	# Stage 2 is faster
 	attack_timer.start()
 

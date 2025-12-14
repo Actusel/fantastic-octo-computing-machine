@@ -18,7 +18,7 @@ func _ready():
 	popup_panel.visibility_changed.connect(_toggled)
 
 func start_game():
-	get_tree().change_scene_to_file("res://area_1.tscn")
+	get_tree().change_scene_to_file("res://environments/area_1.tscn")
 	Global.emit_signal("game_started")
 	
 
@@ -29,7 +29,7 @@ func terminate():
 	get_tree().quit()
 
 func nit_picky():
-	get_tree().change_scene_to_file("res://options.tscn")
+	get_tree().change_scene_to_file("res://menus/options.tscn")
 
 func _toggled():
 	if popup_panel.visible: help.disabled=true

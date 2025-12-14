@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dmaqhqc1fhvow"]
+[gd_scene load_steps=8 format=3 uid="uid://dmaqhqc1fhvow"]
 
 [ext_resource type="Script" uid="uid://cb5b8ws0vgh0w" path="res://environments/maze_gen.gd" id="1_h41xc"]
 [ext_resource type="PackedScene" uid="uid://hwgk002eroac" path="res://entities/enemies/turret_enemy.tscn" id="2_pgab2"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://b57ut7t2odqej" path="res://entities/enemies/melee_enemy.tscn" id="3_mjrf4"]
 [ext_resource type="PackedScene" uid="uid://bg066a1w7o83j" path="res://entities/player/player.tscn" id="3_u11kd"]
 [ext_resource type="PackedScene" uid="uid://bjwxya47jfo4j" path="res://entities/enemies/spike_shooter_enemy.tscn" id="4_nw8dj"]
+[ext_resource type="Resource" uid="uid://bbi1f0s3e6nmr" path="res://items&inventory/items/spear.tres" id="7_hglgr"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -21,3 +22,4 @@ tile_set = ExtResource("2_u11kd")
 
 [node name="player" parent="." instance=ExtResource("3_u11kd")]
 position = Vector2(836, 427)
+weapon = ExtResource("7_hglgr")

@@ -23,7 +23,26 @@ func _ready() -> void:
 func hp_changed(amount):
 	hp_bar.value+=amount
 	if hp_bar.value==0:
+		drop_item()
 		queue_free()
+
+func drop_item():
+	var item_scene = preload("res://items&inventory/item.tscn")
+	var arrow_data = preload("res://items&inventory/items/arrow.tres")
+	var wine_data = preload("res://items&inventory/items/wine.tres")
+	
+	var item_instance = item_scene.instantiate()
+	
+	if randf() > 0.5:
+		item_instance.item_data = arrow_data
+	else:
+		item_instance.item_data = wine_data
+		
+	# Random position within a small radius (e.g., 30 pixels)
+	var random_offset = Vector2(randf_range(-30, 30), randf_range(-30, 30))
+	item_instance.global_position = global_position + random_offset
+	
+	get_parent().call_deferred("add_child", item_instance)
 
 func _on_detection_radius_body_entered(body: Node2D):
 	# Check if the body that entered is in the "player" group

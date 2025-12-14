@@ -5,7 +5,6 @@ class_name Player
 @onready var dash_icon = $ColorRect
 @onready var label = $ui/Label
 @onready var inventory: Control = $ui/inventory
-@onready var label_2: Label = $ui/Label2
 @onready var hp_bar: ProgressBar = $ui/HP
 @onready var hp_label: Label = $ui/hp_label
 @onready var weapon_sprite: Sprite2D = $WeaponTexture
@@ -31,7 +30,8 @@ var damage: float
 
 func _ready() -> void:
 	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
-	change_weapon(weapon)
+	if Global.equipment["weapon"]:
+		change_weapon(Global.equipment["weapon"]["item"])
 	melee_area.body_entered.connect(_on_melee_area_area_entered)
 	melee_area.body_exited.connect(_on_melee_area_area_exited)
 	attack_timer.timeout.connect(_on_attack_timer_timeout)
@@ -114,11 +114,14 @@ func shoot() -> void:
 	if not can_attack or weapon.projectile_scene == null:
 		return
 		
-	var offhand = inventory.find_child("offhand", true, false)
-	if not offhand or not offhand.item_data or offhand.item_data.type != "arrow":
+	# Check for arrows in offhand via Global
+	var offhand_slot = Global.equipment["offhand"]
+	if offhand_slot == null or offhand_slot["item"].type != "arrow":
 		return
 
-	offhand._consume_from_stack(1)
+	# Consume arrow
+	if not Global.consume_equipment("offhand", 1):
+		return
 
 	# Stop shooting and start the cooldown timer
 	can_attack = false
@@ -149,8 +152,8 @@ func try_attack(target: Node2D) -> void:
 	
 	# --- Animation Setup ---
 	var tween = create_tween()
-	var swing_duration = 0.3     # Total swing animation time
-	var damage_delay = 0.15      # When to apply damage relative to start
+	var swing_duration = 0.2     # Total swing animation time
+	var damage_delay = 0.1      # When to apply damage relative to start
 	var start_angle = deg_to_rad(-30)
 	var end_angle = deg_to_rad(30)
 	
@@ -161,7 +164,7 @@ func try_attack(target: Node2D) -> void:
 	# 1. Animate the swing (main track)
 	tween.tween_property(weapon_sprite, "rotation", end_angle, swing_duration) \
 		 .set_trans(Tween.TRANS_CUBIC) \
-		 .set_ease(Tween.EASE_IN)
+		 .set_trans(Tween.TRANS_LINEAR)
 	
 	# 2. Run the damage callback *in parallel* with a delay
 	tween.parallel() \
@@ -177,6 +180,8 @@ func try_attack(target: Node2D) -> void:
 func _apply_damage(target: Node2D) -> void:
 	# We must check again if the target is still valid and in range
 	# This prevents the player from being hit if they dash away just in time
+	print(target)
+	print(enemy)
 	var is_enemy_still_in_range = false
 	for body in melee_area.get_overlapping_bodies():
 		if body == target:
@@ -192,7 +197,7 @@ func _apply_damage(target: Node2D) -> void:
 
 func _on_melee_area_area_entered(body: Node2D) -> void:
 	if body.is_in_group("enemy"):
-		enemy = body
+		enemy = body as CharacterBody2D
 
 
 func _on_melee_area_area_exited(body: Node2D) -> void:

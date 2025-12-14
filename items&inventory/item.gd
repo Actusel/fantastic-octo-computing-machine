@@ -3,7 +3,6 @@ extends Area2D
 @export var item_data: ItemData          # The resource describing this item
 @onready var visual: Sprite2D = $visual
 
-var inv: Control                          # Reference to Inventory
 var inside: bool = false
 var can_pickup: bool = true
 
@@ -15,9 +14,6 @@ func _ready():
 
 	body_entered.connect(_on_body_enter)
 	body_exited.connect(_on_body_exit)
-
-	# Find the inventory node (same as your previous logic)
-	inv = get_tree().root.find_child("inventory", true, false)
 
 
 func _on_body_enter(body):
@@ -40,18 +36,12 @@ func _try_pickup():
 		push_warning("Ground item missing its ItemData resource!")
 		return
 
-	# Check if inventory has space + weight room
-	var new_weight = inv.total_weight + item_data.weight
+	# Attempt to add to Global inventory
+	# Global.add_item returns the amount that was NOT added (leftover)
+	var leftover = Global.add_item(item_data, 1)
 
-	if inv.next_available_slot == -1:
-		print("Inventory full!")
-		return
-
-	if new_weight > inv.max_weight:
-		print("Too heavy!")
-		return
-
-	# Add to inventory
-	inv.add_to_inventory(item_data)
-
-	queue_free()
+	if leftover == 0:
+		# Successfully picked up everything
+		queue_free()
+	else:
+		print("Inventory full or too heavy!")

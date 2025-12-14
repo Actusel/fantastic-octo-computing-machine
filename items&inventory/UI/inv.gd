@@ -7,123 +7,90 @@ var player = null
 
 const INV_SLOT = preload("uid://bgstnt0syqkyr")
 
-var total_slots: int = 3
-var total_weight: int = 0
-var max_weight: int = 50
-
-var next_available_slot: int = -1
-var available_slots: int = 0
-
-
 # ---------------------------------------------------------
 # INITIALIZATION
 # ---------------------------------------------------------
 func _ready() -> void:
 	player = get_tree().root.find_child("player", true, false)
-	_update_stats()
-	_initialize_slots()
+	
+	if not Global.inventory:
+		Global._resize_inventory()
+	
+	# Connect to Global signal
+	if not Global.inventory_updated.is_connected(_on_inventory_updated):
+		Global.inventory_updated.connect(_on_inventory_updated)
+	
+	# Initial render
+	_on_inventory_updated()
+
+
+# ---------------------------------------------------------
+# INVENTORY MANAGEMENT (View Update)
+# ---------------------------------------------------------
+func _on_inventory_updated() -> void:
+	_update_slots()
+	_update_equipment_slots()
 	_update_weight_label()
 
+func _update_equipment_slots() -> void:
+	var map = {
+		"helmet": "helmet",
+		"body": "body",
+		"weapon": "weapon",
+		"offhand": "offhand"
+	}
+	
+	for key in map:
+		var node_name = map[key]
+		var slot_node = find_child(node_name, true, false)
+		if slot_node and slot_node.has_method("update_slot"):
+			var data = Global.equipment[key]
+			if data:
+				slot_node.update_slot(data["item"], data["count"])
+			else:
+				slot_node.clear_slot()
 
-func _update_stats() -> void:
-	total_slots = min(3 + round(Global.leg), 30)
-	max_weight = 500 + round(Global.leg * 10)
+func _update_slots() -> void:
+	# Ensure we have the correct number of slots
+	var current_slots = inv_grid.get_child_count()
+	var target_slots = Global.inventory.size()
+	
+	# Add needed slots
+	if current_slots < target_slots:
+		for i in range(target_slots - current_slots):
+			var slot = INV_SLOT.instantiate()
+			inv_grid.add_child(slot)
+	
+	# Remove extra slots (if any)
+	elif current_slots > target_slots:
+		for i in range(current_slots - target_slots):
+			inv_grid.get_child(current_slots - 1 - i).queue_free()
+	
+	# Update slot data
+	for i in range(target_slots):
+		var slot_ui = inv_grid.get_child(i)
+		var slot_data = Global.inventory[i]
+		
+		# We will add 'slot_index' to inv_slot.gd
+		if "slot_index" in slot_ui:
+			slot_ui.slot_index = i 
+		
+		if slot_data != null:
+			# We will add 'update_slot' to inv_slot.gd, or use fill_slot
+			if slot_ui.has_method("update_slot"):
+				slot_ui.update_slot(slot_data["item"], slot_data["count"])
+			else:
+				# Fallback to old method if not yet updated (though we will update it)
+				slot_ui.clear_slot()
+				slot_ui.fill_slot(slot_data["item"], slot_data["count"])
+		else:
+			slot_ui.clear_slot()
 
-
-func _initialize_slots() -> void:
-	# Clear existing (if panel is rebuilt)
-	for c in inv_grid.get_children():
-		c.queue_free()
-
-	for i in total_slots:
-		inv_grid.add_child(INV_SLOT.instantiate())
-
-	# Recalculate slot availability
-	_rescan_slots()
-
-
-# ---------------------------------------------------------
-# INVENTORY MANAGEMENT
-# ---------------------------------------------------------
 func add_to_inventory(item_data: ItemData, amount: int = 1) -> void:
-	var remaining := amount
-
-	# -------------------------------------------------
-	# 1) STACK INTO EXISTING SLOTS FIRST
-	# -------------------------------------------------
-	if item_data.max_stack > 1:
-		for slot in inv_grid.get_children():
-			if not slot.filled:
-				continue
-
-			if slot.item_data != item_data:
-				continue
-
-			var space = item_data.max_stack - slot.stack_count
-			if space <= 0:
-				continue
-
-			var to_add = min(space, remaining)
-			slot.stack_count += to_add
-			remaining -= to_add
-
-			total_weight += item_data.weight * to_add
-			_update_weight_label()
-
-			if remaining == 0:
-				_rescan_slots()
-				return
-
-	# -------------------------------------------------
-	# 2) PLACE INTO EMPTY SLOTS
-	# -------------------------------------------------
-	for slot in inv_grid.get_children():
-		if remaining == 0:
-			break
-
-		if slot.filled:
-			continue
-
-		# Weight check PER SLOT placement
-		var to_place = min(item_data.max_stack, remaining)
-		var added_weight = item_data.weight * to_place
-
-		if total_weight + added_weight > max_weight:
-			print("Too heavy!")
-			break
-
-		slot.fill_slot(item_data)
-		slot.stack_count = to_place
-
-		total_weight += added_weight
-		remaining -= to_place
-		_update_weight_label()
-
-	# -------------------------------------------------
-	# 3) FINALIZE
-	# -------------------------------------------------
-	if remaining > 0:
-		print("Inventory full, leftover:", remaining)
-
-	_rescan_slots()
-
-
-
-# ---------------------------------------------------------
-# SLOT SCANNING (Optimized)
-# ---------------------------------------------------------
-func _rescan_slots() -> void:
-	available_slots = 0
-	next_available_slot = -1
-
-	var child_count := inv_grid.get_child_count()
-	for i in child_count:
-		var slot = inv_grid.get_child(i)
-		if not slot.filled:
-			available_slots += 1
-			if next_available_slot == -1:
-				next_available_slot = i
-
+	# Delegate to Global
+	var leftover = Global.add_item(item_data, amount)
+	if leftover > 0:
+		print("Inventory full or heavy, leftover:", leftover)
 
 # ---------------------------------------------------------
 # UI + INPUT
@@ -138,4 +105,12 @@ func toggle_inv() -> void:
 
 
 func _update_weight_label() -> void:
-	label.text = "carrying %d/%d kg" % [total_weight, max_weight]
+	label.text = "carrying %d/%d kg" % [Global.get_total_weight(), Global.get_max_weight()]
+
+# Compatibility property for scripts accessing next_available_slot
+var next_available_slot: int:
+	get:
+		for i in range(Global.inventory.size()):
+			if Global.inventory[i] == null:
+				return i
+		return -1

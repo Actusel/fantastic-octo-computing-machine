@@ -16,7 +16,7 @@ extends Node2D
 @export var source_id: int = 8
 @export var wall_atlas_coords: Vector2i = Vector2i(17, 3)
 @export var floor_atlas_coords: Vector2i = Vector2i(1, 5)
-@export var start_atlas_coords: Vector2i = floor_atlas_coords
+@export var start_atlas_coords: Vector2i = Vector2(17,11)
 @export var end_atlas_coords: Vector2i = Vector2i(1, 23)
 
 
