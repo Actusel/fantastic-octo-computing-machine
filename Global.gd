@@ -215,3 +215,172 @@ func _unequip_effect(item: ItemData) -> void:
 			get_tree().call_group("player", "max_hp_changed", -item.strongness)
 		"weapon":
 			get_tree().call_group("player", "clear_weapon")
+
+# --- Drag and Drop Helpers ---
+
+func drag_move_inventory_to_inventory(from_idx: int, to_idx: int) -> void:
+	if from_idx == to_idx: return
+	var from_slot = inventory[from_idx]
+	var to_slot = inventory[to_idx]
+	
+	if from_slot == null: return
+	
+	if to_slot == null:
+		inventory[to_idx] = from_slot
+		inventory[from_idx] = null
+	elif to_slot["item"] == from_slot["item"] and to_slot["item"].max_stack > 1:
+		var space = to_slot["item"].max_stack - to_slot["count"]
+		var to_move = min(space, from_slot["count"])
+		to_slot["count"] += to_move
+		from_slot["count"] -= to_move
+		if from_slot["count"] <= 0:
+			inventory[from_idx] = null
+	else:
+		inventory[to_idx] = from_slot
+		inventory[from_idx] = to_slot
+	
+	emit_signal("inventory_updated")
+
+func drag_equip_to_inventory(equip_key: String, inv_idx: int) -> void:
+	var equip_slot = equipment[equip_key]
+	var inv_slot = inventory[inv_idx]
+	
+	if equip_slot == null: return
+	
+	if inv_slot == null:
+		_unequip_effect(equip_slot["item"])
+		inventory[inv_idx] = equip_slot
+		equipment[equip_key] = null
+	elif inv_slot["item"] == equip_slot["item"] and inv_slot["item"].max_stack > 1:
+		var space = inv_slot["item"].max_stack - inv_slot["count"]
+		var to_move = min(space, equip_slot["count"])
+		inv_slot["count"] += to_move
+		equip_slot["count"] -= to_move
+		if equip_slot["count"] <= 0:
+			_unequip_effect(equip_slot["item"])
+			equipment[equip_key] = null
+	else:
+		# Swap check
+		var item_to_equip = inv_slot["item"]
+		var can_equip = false
+		if equip_key == "helmet" and item_to_equip.type == "helmet": can_equip = true
+		elif equip_key == "body" and item_to_equip.type == "body": can_equip = true
+		elif equip_key == "weapon" and item_to_equip.type == "weapon": can_equip = true
+		elif equip_key == "offhand" and (item_to_equip.type == "shield" or item_to_equip.type == "arrow"): can_equip = true
+		
+		if can_equip:
+			_unequip_effect(equip_slot["item"])
+			inventory[inv_idx] = equip_slot
+			equipment[equip_key] = inv_slot
+			_equip_effect(item_to_equip)
+			
+	emit_signal("inventory_updated")
+
+func drag_inventory_to_equip(inv_idx: int, equip_key: String) -> void:
+	var inv_slot = inventory[inv_idx]
+	var equip_slot = equipment[equip_key]
+	
+	if inv_slot == null: return
+	
+	var item = inv_slot["item"]
+	# Validation should happen before calling this, but double check
+	var valid = false
+	if equip_key == "helmet" and item.type == "helmet": valid = true
+	elif equip_key == "body" and item.type == "body": valid = true
+	elif equip_key == "weapon" and item.type == "weapon": valid = true
+	elif equip_key == "offhand" and (item.type == "shield" or item.type == "arrow"): valid = true
+	
+	if not valid: return
+	
+	if equip_slot == null:
+		equipment[equip_key] = inv_slot
+		inventory[inv_idx] = null
+		_equip_effect(item)
+	else:
+		_unequip_effect(equip_slot["item"])
+		equipment[equip_key] = inv_slot
+		inventory[inv_idx] = equip_slot
+		_equip_effect(item)
+		
+	emit_signal("inventory_updated")
+
+
+func move_inventory_item(from_index: int, to_index: int) -> void:
+	if from_index == to_index: return
+	if from_index < 0 or from_index >= inventory.size(): return
+	if to_index < 0 or to_index >= inventory.size(): return
+	
+	var from_slot = inventory[from_index]
+	var to_slot = inventory[to_index]
+	
+	if from_slot == null: return
+	
+	# If target is empty, just move
+	if to_slot == null:
+		inventory[to_index] = from_slot
+		inventory[from_index] = null
+	
+	# If same item, try to stack
+	elif to_slot["item"] == from_slot["item"] and to_slot["item"].max_stack > 1:
+		var space = to_slot["item"].max_stack - to_slot["count"]
+		var to_move = min(space, from_slot["count"])
+		
+		to_slot["count"] += to_move
+		from_slot["count"] -= to_move
+		
+		if from_slot["count"] <= 0:
+			inventory[from_index] = null
+	
+	# If different item, swap
+	else:
+		inventory[to_index] = from_slot
+		inventory[from_index] = to_slot
+	
+	emit_signal("inventory_updated")
+
+func unequip_into_slot(equip_key: String, target_inv_index: int) -> void:
+	if equipment.get(equip_key) == null: return
+	if target_inv_index < 0 or target_inv_index >= inventory.size(): return
+	
+	var equip_entry = equipment[equip_key]
+	var target_slot = inventory[target_inv_index]
+	
+	# If target is empty, unequip there
+	if target_slot == null:
+		inventory[target_inv_index] = equip_entry
+		equipment[equip_key] = null
+		_unequip_effect(equip_entry["item"])
+	
+	# If target matches, stack
+	elif target_slot["item"] == equip_entry["item"] and target_slot["item"].max_stack > 1:
+		var space = target_slot["item"].max_stack - target_slot["count"]
+		var to_move = min(space, equip_entry["count"])
+		
+		target_slot["count"] += to_move
+		equip_entry["count"] -= to_move
+		
+		if equip_entry["count"] <= 0:
+			equipment[equip_key] = null
+			_unequip_effect(equip_entry["item"])
+			
+	# If target is different, try to swap (equip the target item)
+	else:
+		var new_item = target_slot["item"]
+		var new_type = new_item.type
+		
+		# Check if the item in inventory can go to this equip slot
+		var valid_key = ""
+		if new_type in ["helmet", "body", "weapon"]:
+			valid_key = new_type
+		elif new_type in ["shield", "arrow"]:
+			valid_key = "offhand"
+			
+		if valid_key == equip_key:
+			# Perform swap
+			_unequip_effect(equip_entry["item"])
+			inventory[target_inv_index] = equip_entry
+			
+			equipment[equip_key] = target_slot
+			_equip_effect(new_item)
+	
+	emit_signal("inventory_updated")
