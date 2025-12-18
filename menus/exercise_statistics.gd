@@ -11,13 +11,15 @@ extends Control
 @onready var line_edit: LineEdit = $VBoxContainer/HBoxContainer/new_graph
 @onready var graph_ = $"graph_"
 @onready var label: Label = $VBoxContainer/WeightRow/label
-@onready var save_to_file: Button = $VBoxContainer/HBoxContainer2/SaveToFile
+@onready var save_to_file: Button = $VBoxContainer/FileSaveRow/SaveToFile
+
 
 var graph_data := {} 
 var current_graph := "leggies"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	SaveManager.load_game()
 	Global.game_started.connect(_on_game_started)
 	if Global.graph_data: graph_data=Global.graph_data
 	else: graph_data = {"leggies": [], "armstrong": [], "stamina": []}
@@ -92,4 +94,4 @@ func _on_clear():
 	pass
 
 func _on_save_button_pressed():
-	pass
+	SaveManager.save_game()

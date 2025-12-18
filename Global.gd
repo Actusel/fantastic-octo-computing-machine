@@ -23,10 +23,12 @@ var back = 0.0
 
 func update(new_data):
 	graph_data = new_data
-	stamina = _find_max_y(graph_data["stamina"])
-	leg = _find_max_y(graph_data["leggies"])
-	arm = _find_max_y(graph_data["armstrong"])
-	_resize_inventory()
+	print(graph_data)
+	if graph_data:
+		stamina = _find_max_y(graph_data["stamina"])
+		leg = _find_max_y(graph_data["leggies"])
+		arm = _find_max_y(graph_data["armstrong"])
+		_resize_inventory()
 	
 
 func _find_max_y(series: Array) -> float:

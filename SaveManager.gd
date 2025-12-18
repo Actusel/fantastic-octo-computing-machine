@@ -1,5 +1,7 @@
 extends Node
 
+signal game_saved
+
 const SAVE_PATH = "user://savegame.json"
 
 func save_game():
@@ -15,6 +17,7 @@ func save_game():
 		var json_string = JSON.stringify(save_data)
 		file.store_string(json_string)
 		print("Game saved to " + SAVE_PATH)
+		emit_signal("game_saved")
 	else:
 		print("Failed to open save file for writing")
 

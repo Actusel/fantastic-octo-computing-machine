@@ -15,6 +15,7 @@ class_name Player
 @onready var projectile_spawn: Marker2D = $ProjectileSpawn
 @onready var maze_gen: Node2D = $"../MazeGen"
 
+var save_label: Label
 
 @export var weapon: ItemData = null
 var can_attack: bool = true
@@ -29,6 +30,16 @@ var dash_timer: float
 var damage: float
 
 func _ready() -> void:
+	# Create Save Label
+	save_label = Label.new()
+	save_label.text = "Progress Saved"
+	save_label.visible = false
+	save_label.position = Vector2(20, 20) # Adjust position as needed
+	save_label.add_theme_color_override("font_color", Color.YELLOW)
+	$ui.add_child(save_label)
+	
+	SaveManager.game_saved.connect(_on_game_saved)
+
 	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
 	
 	melee_area.body_entered.connect(_on_melee_area_area_entered)
@@ -37,6 +48,12 @@ func _ready() -> void:
 	
 	# Sync with Global equipment
 	Global.reapply_equipment_effects()
+
+func _on_game_saved():
+	if save_label:
+		save_label.visible = true
+		var timer = get_tree().create_timer(2.0)
+		timer.timeout.connect(func(): save_label.visible = false)
 	
 func hp_changed(amount):
 	if not (amount<0 and dashing):

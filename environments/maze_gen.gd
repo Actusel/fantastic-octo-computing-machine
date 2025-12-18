@@ -36,6 +36,7 @@ var _end_pos: Vector2i = Vector2i(-1, -1)
 const door_scene = preload("uid://bcgit45sqlnrj")
 var door = null
 
+
 func _ready() -> void:
 	if not tile_map_layer or not player:
 		push_error("MazeGenerator: Please assign TileMapLayer AND Player in inspector.")
@@ -201,6 +202,7 @@ func _on_goal_reached(body: Node2D) -> void:
 func _level_up() -> void:
 	print("Level Complete! Increasing size...")
 	Global.level += 1
+	SaveManager.save_game()
 	generate_maze()
 
 # --- Helper Math ---
@@ -218,6 +220,7 @@ func _get_center_tile_of_room(logical_pos: Vector2i) -> Vector2i:
 
 func _paint_special_room(logical_pos: Vector2i, atlas_coords: Vector2i) -> void:
 	var stride = corridor_width + wall_thickness
+	
 	var start_x = (logical_pos.x * stride) + wall_thickness
 	var start_y = (logical_pos.y * stride) + wall_thickness
 	
