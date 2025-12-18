@@ -64,5 +64,6 @@ offset_bottom = 96.0
 text = "leg: inventory space
 arm:  DMG
 back: HP
-stamina: sprint&dash"
+stamina: speed&dash"
 editable = false
+scroll_vertical = 1.0

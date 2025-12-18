@@ -23,7 +23,6 @@ var back = 0.0
 
 func update(new_data):
 	graph_data = new_data
-	print(graph_data)
 	if graph_data:
 		stamina = _find_max_y(graph_data["stamina"])
 		leg = _find_max_y(graph_data["leggies"])
@@ -142,7 +141,7 @@ func use_item(index: int) -> void:
 	var item = inventory[index]["item"]
 	
 	if item.type == "food":
-		get_tree().call_group("player", "hp_changed", item.strongness)
+		get_tree().call_group("player", "heal", item.strongness)
 		remove_item(index, 1)
 	
 	elif item.type in ["helmet", "body", "weapon", "shield", "arrow"]:

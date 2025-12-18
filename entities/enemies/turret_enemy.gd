@@ -9,7 +9,7 @@ class_name TurretEnemy
 @onready var projectile_spawn: Marker2D = $ProjectileSpawn
 @onready var sprite: Sprite2D = $Sprite2D # Optional, for flipping
 @onready var backing_up_range: Area2D = $BackingUpRange
-
+	
 # --- State Variables ---
 # player is in BaseEnemy
 # can_shoot -> can_attack
@@ -75,7 +75,7 @@ func _physics_process(_delta: float) -> void:
 		shoot()
 		
 		if run:
-			velocity = Vector2(1, 0).rotated(rotation)*-75
+			velocity = Vector2(1, 0).rotated(rotation)*-speed
 			move_and_slide()
 		else: velocity = Vector2.ZERO
 	# If the ray *is* colliding, it means a wall is in the way.

@@ -13,12 +13,15 @@ extends Control
 @onready var label: Label = $VBoxContainer/WeightRow/label
 @onready var save_to_file: Button = $VBoxContainer/FileSaveRow/SaveToFile
 
-
 var graph_data := {} 
-var current_graph = "armstrong"
+var current_graph = "leggies"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	var current_time = Time.get_datetime_dict_from_system()
+	year.value = current_time["year"]
+	month.select(current_time["month"] - 1)
+	day.value = current_time["day"]
 	SaveManager.load_game()
 	Global.game_started.connect(_on_game_started)
 	if Global.graph_data: graph_data=Global.graph_data
@@ -30,7 +33,8 @@ func _ready():
 	clear.pressed.connect(_on_clear)
 	save_to_file.pressed.connect(_on_save_button_pressed)
 	add_graph.pressed.connect(_on_add_graph)
-	graph_.update_graph(graph_data)
+	if graph_.all_graphs:graph_.update_graph(graph_data)
+	else: graph_.update_graph(graph_data[current_graph])
 
 func _on_add_graph():
 	if not line_edit.text: return
@@ -47,51 +51,34 @@ func _on_graph_selected(index: int) -> void:
 	else: label.text = "Weight(kg):"
 
 
-func date_to_days(year: int, month: int, day: int) -> float:
-	# Calculate days from complete years
-	var total_days = year * 365
-	
-	# Add leap days (every 4 years, except century years unless divisible by 400)
-	var leap_days = int(year / 4) - int(year / 100) + int(year / 400)
-	total_days += leap_days
-	
-	# Days in each month (non-leap year)
-	var days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-	
-	# Check if current year is a leap year
-	var is_leap = (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
-	if is_leap:
-		days_in_month[1] = 29
-	
-	# Add days from complete months in current year
-	for m in range(month):
-		total_days += days_in_month[m]
-	
-	# Add remaining days
-	total_days += day
-	
-	return float(total_days)
+
 
 func _on_submit():
 	var y_val = weight.value
-	var days = date_to_days(year.value,(month.get_selected_id()),day.value)
+	var datetime = {
+		"year": int(year.value),
+		"month": month.get_selected_id() + 1,
+		"day": int(day.value)
+	}
+	var unix_time = Time.get_unix_time_from_datetime_dict(datetime)
 	var updated = false
 	for points in graph_data[current_graph]:
-		if points["date"] == days:
+		if points["date"] == unix_time:
 			points["y"] = y_val
 			updated = true
 			break
-	if not updated: graph_data[current_graph].append({ "date": days, "y": y_val })
+	if not updated: graph_data[current_graph].append({ "date": unix_time, "y": y_val })
 	
 	if graph_.all_graphs: graph_.call_deferred("update_graph", graph_data)
 	else: graph_.call_deferred("update_graph", graph_data[current_graph])
-	
 
 func _on_game_started():
 	Global.update(graph_data)
 
 func _on_clear():
-	pass
+	graph_data = {}
+	graph_.update_graph(graph_data)
 
 func _on_save_button_pressed():
+	Global.update(graph_data)
 	SaveManager.save_game()

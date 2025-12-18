@@ -16,7 +16,6 @@ var dash_duration = 0.6
 # --- Timer References (Add these nodes as children of the Boss) ---
 @onready var attack_timer = $AttackTimer
 @onready var movement_tween: Tween
-@onready var hp_bar: ProgressBar = $hp_bar
 
 # --- Difficulty Scaling Logic ---
 var bullet_count: int
@@ -26,8 +25,13 @@ func _ready():
 	calculate_difficulty_stats()
 	current_hp = max_hp
 	start_attack_cycle()
-	hp_bar.max_value = max_hp
-	hp_bar.value = max_hp
+	
+	if has_node("hp_bar"):
+		get_node("hp_bar").hide()
+	
+	var player = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("update_boss_health"):
+		player.update_boss_health(current_hp, max_hp)
 
 func calculate_difficulty_stats():
 	# CLAMP bullet count: Starts at 5, maxes at 30.
@@ -47,7 +51,11 @@ func hp_changed(amount: float):
 	if current_stage == Stage.TRANSITION: return
 	
 	current_hp += amount
-	hp_bar.value = current_hp
+	
+	var player = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("update_boss_health"):
+		player.update_boss_health(current_hp, max_hp)
+		
 	print(current_hp)
 	
 	# Check for Phase Transition (50% HP)
@@ -228,5 +236,10 @@ func spawn_bullet(pos: Vector2, dir: Vector2, speed: float, mode_info = {}) -> N
 func die():
 	Global.level+=1
 	SaveManager.save_game()
+	
+	var player = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("hide_boss_health"):
+		player.hide_boss_health()
+		
 	get_tree().change_scene_to_file("res://environments/maze.tscn")
 	queue_free()

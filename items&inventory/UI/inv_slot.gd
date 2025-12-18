@@ -80,11 +80,12 @@ func _on_item_drop() -> void:
 		drop_pos = player.global_position
 	
 	# Spawn multiple items for the stack
-	for i in range(stack_count):
-		var ground_item := ground_item_scene.instantiate()
-		ground_item.item_data = item_data
-		ground_item.global_position = drop_pos + Vector2(randf_range(-10, 10), randf_range(-10, 10))
-		get_tree().current_scene.add_child(ground_item)
+	
+	var ground_item := ground_item_scene.instantiate()
+	ground_item.item_data = item_data
+	ground_item.amount = stack_count
+	ground_item.global_position = drop_pos + Vector2(randf_range(-10, 10), randf_range(-10, 10))
+	get_tree().current_scene.add_child(ground_item)
 	
 	# Remove from data
 	if slot_type == slot_types.inventory:

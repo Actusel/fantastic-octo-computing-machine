@@ -13,10 +13,10 @@ class_name Player
 @onready var player_sprite: Sprite2D = $PlayerSprite
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var projectile_spawn: Marker2D = $ProjectileSpawn
+@onready var save_label: Label = $ui/SaveLabel
 # Decoupled MazeGen reference
 signal player_died
 
-var save_label: Label
 
 @export var weapon: ItemData = null
 # can_attack is in BaseEntity
@@ -29,16 +29,13 @@ const push_str = 100
 var dashing = false
 var dash_timer: float
 var damage: float
+var boss_bar: ProgressBar
 
 func _ready() -> void:
 	super._ready()
 	# Create Save Label
-	save_label = Label.new()
-	save_label.text = "Progress Saved"
-	save_label.visible = false
-	save_label.position = Vector2(20, 20) # Adjust position as needed
-	save_label.add_theme_color_override("font_color", Color.YELLOW)
-	$ui.add_child(save_label)
+	
+	_setup_boss_bar()
 	
 	SaveManager.game_saved.connect(_on_game_saved)
 
@@ -51,18 +48,44 @@ func _ready() -> void:
 	# Sync with Global equipment
 	Global.reapply_equipment_effects()
 
+func _setup_boss_bar():
+	boss_bar = ProgressBar.new()
+	$ui.add_child(boss_bar)
+	boss_bar.name = "BossHP"
+	boss_bar.visible = false
+	boss_bar.show_percentage = false
+	
+	# Set anchors to bottom wide
+	boss_bar.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	boss_bar.offset_left = 200
+	boss_bar.offset_right = -200
+	boss_bar.offset_bottom = -50
+	boss_bar.offset_top = -80
+	
+	var style_fill = StyleBoxFlat.new()
+	style_fill.bg_color = Color(0.8, 0.1, 0.1) # Red
+	boss_bar.add_theme_stylebox_override("fill", style_fill)
+	
+	var style_bg = StyleBoxFlat.new()
+	style_bg.bg_color = Color(0.2, 0.2, 0.2, 0.8) # Dark Gray
+	boss_bar.add_theme_stylebox_override("background", style_bg)
+
+func update_boss_health(boss_current_hp: float, boss_max_hp: float):
+	if not boss_bar.visible:
+		boss_bar.visible = true
+	boss_bar.max_value = boss_max_hp
+	boss_bar.value = boss_current_hp
+
+func hide_boss_health():
+	if boss_bar:
+		boss_bar.visible = false
+
 func _on_game_saved():
 	if save_label:
 		save_label.visible = true
 		var timer = get_tree().create_timer(2.0)
 		timer.timeout.connect(func(): save_label.visible = false)
 	
-func hp_changed(amount):
-	if amount < 0:
-		if not dashing:
-			take_damage(-amount)
-	else:
-		heal(amount)
 	
 	hp_label.text = str(current_hp) + "/" + str(max_hp)
 
@@ -192,17 +215,15 @@ func try_attack(target: Node2D) -> void:
 		 .tween_callback(_apply_damage.bind(target)) \
 		 .set_delay(damage_delay)
 	
-	# 3. Hide weapon when animation completes
+	# 3. Hide weapon and reset rotation when animation completes
 	tween.tween_callback(weapon_sprite.hide)
+	tween.tween_callback(weapon_sprite.set_rotation.bind(0))
 
 
 
 # This new function holds the damage logic
 func _apply_damage(target: Node2D) -> void:
 	# We must check again if the target is still valid and in range
-	# This prevents the player from being hit if they dash away just in time
-	print(target)
-	print(enemy)
 	var is_enemy_still_in_range = false
 	for body in melee_area.get_overlapping_bodies():
 		if body == target:

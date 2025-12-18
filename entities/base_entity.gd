@@ -4,7 +4,7 @@ signal health_changed(new_value, max_value)
 signal died
 
 @export var max_hp: float = 100.0
-@export var speed: float = 200.0
+@export var speed: float = 100.0
 
 var current_hp: float
 var can_attack: bool = true

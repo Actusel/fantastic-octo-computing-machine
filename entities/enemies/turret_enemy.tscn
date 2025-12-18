@@ -21,8 +21,10 @@ bg_color = Color(0.9764706, 0, 0, 1)
 
 [node name="TurretEnemy" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 4
+collision_mask = 17
 motion_mode = 1
 script = ExtResource("1_l1ivg")
+speed = 75.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(1, 0, 0, 1)

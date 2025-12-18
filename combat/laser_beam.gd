@@ -50,9 +50,9 @@ func _physics_process(_delta):
 		# Visually stop the line at the hit point
 		line.points[1] = to_local(hit_point)
 		
-		if hit_obj.is_in_group("player") and hit_obj.has_method("hp_changed"):
+		if hit_obj.is_in_group("player") and hit_obj.has_method("take_damage"):
 			# Damage is applied every frame, so keep the number low!
-			hit_obj.hp_changed(-damage_per_tick)
+			hit_obj.take_damage(damage_per_tick)
 	else:
 		# If hitting nothing, draw line to max distance
 		line.points[1] = target_position

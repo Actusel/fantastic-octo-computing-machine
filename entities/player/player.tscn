@@ -30,6 +30,7 @@ size = Vector2(43.546875, 53)
 collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_h8b4u")
+speed = 200.0
 
 [node name="PlayerSprite" type="Sprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
@@ -97,6 +98,16 @@ offset_left = -150.0
 offset_top = -200.0
 offset_right = 150.0
 offset_bottom = 200.0
+
+[node name="SaveLabel" type="Label" parent="ui"]
+visible = false
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 138.0
+offset_bottom = 43.0
+theme_override_colors/font_color = Color(1, 1, 0.47843137, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+text = "Progress Saved 💾"
 
 [node name="MeleeArea" type="Area2D" parent="."]
 scale = Vector2(1.5, 1.5)

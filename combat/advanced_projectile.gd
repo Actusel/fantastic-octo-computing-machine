@@ -48,8 +48,6 @@ func _on_body_entered(body):
 	# Ignore shooter if needed, but for now just hit anything
 	if body.has_method("take_damage"):
 		body.take_damage(damage)
-	elif body.has_method("hp_changed"):
-		body.hp_changed(-damage)
 		
 	queue_free()
 

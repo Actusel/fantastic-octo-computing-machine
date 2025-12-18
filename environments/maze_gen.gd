@@ -38,6 +38,7 @@ var door = null
 
 
 func _ready() -> void:
+	Global.level = 4
 	if not tile_map_layer or not player:
 		push_error("MazeGenerator: Please assign TileMapLayer AND Player in inspector.")
 		return

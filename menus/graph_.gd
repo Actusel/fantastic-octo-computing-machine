@@ -1,7 +1,7 @@
 extends Control
 
 var datasets = {}
-var all_graphs = true
+var all_graphs = false
 var colors = [Color.RED, Color.SKY_BLUE, Color.LIME_GREEN, Color.ORANGE, Color.VIOLET]
 
 func update_graph(new_data) -> void:
@@ -95,7 +95,7 @@ func _draw() -> void:
 			var nx = (px - min_x) / (max_x - min_x)
 			var ny = (py - min_y) / (max_y - min_y)
 			var pos = Vector2(margin + nx * graph_width, origin.y - ny * graph_height)
-			var date_label := days_to_date(px)
+			var date_label := Time.get_date_string_from_unix_time(int(px))
 			var label_pos := Vector2(pos.x - 25, origin.y + 20)
 			draw_string(
 			get_theme_default_font(),
@@ -110,45 +110,3 @@ func _draw() -> void:
 			if i > 0:
 				draw_line(prev_pos, pos, color, 2)
 			prev_pos = pos
-
-# ---- Helper: Convert day number -> YYYY-MM-DD ----
-func days_to_date(total_days: float) -> String:
-	var days = int(total_days)
-	
-	# Estimate year (approximation: 365.2425 days per year in Gregorian calendar)
-	var year = int(days / 365.2425)
-	
-	# Refine year estimate by calculating actual days up to that year
-	while true:
-		var days_in_year = year * 365
-		var leap_days = int(year / 4) - int(year / 100) + int(year / 400)
-		var total_to_year = days_in_year + leap_days
-		
-		if total_to_year > days:
-			year -= 1
-		else:
-			days -= total_to_year
-			break
-	
-	# Check if current year is a leap year
-	var is_leap = (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
-	
-	# Days in each month
-	var days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-	if is_leap:
-		days_in_month[1] = 29
-	
-	# Find the month
-	var month = 1
-	for m in range(12):
-		if days > days_in_month[m]:
-			days -= days_in_month[m]
-			month += 1
-		else:
-			break
-	
-	# Remaining days is the day of month
-	var day = days
-	
-	# Format as "year-month-day"
-	return "%d-%02d-%02d" % [year, month, day]

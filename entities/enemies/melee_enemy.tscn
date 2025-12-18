@@ -1,9 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://b57ut7t2odqej"]
+[gd_scene load_steps=15 format=3 uid="uid://b57ut7t2odqej"]
 
 [ext_resource type="Texture2D" uid="uid://bmspdadwfumot" path="res://assets/icon.svg" id="1_otv3p"]
 [ext_resource type="Script" uid="uid://pq8gromuo0og" path="res://entities/enemies/melee_enemy.gd" id="1_vn61j"]
 [ext_resource type="Texture2D" uid="uid://blcesbt6kmxbg" path="res://assets/long_arrow.png" id="2_kj6g3"]
 [ext_resource type="Script" uid="uid://bv3wxj82p0prm" path="res://items&inventory/item_data.gd" id="3_j2cp2"]
+[ext_resource type="Resource" uid="uid://bbi1f0s3e6nmr" path="res://items&inventory/items/spear.tres" id="4_omiy7"]
+[ext_resource type="Script" uid="uid://cxqoqdw8t4gis" path="res://entities/enemies/loot_item.gd" id="4_pyybu"]
+[ext_resource type="Resource" uid="uid://dxjkcc121w4py" path="res://wine_enemy_drops.tres" id="5_wivaj"]
 
 [sub_resource type="Resource" id="Resource_kj6g3"]
 script = ExtResource("3_j2cp2")
@@ -11,6 +14,12 @@ type = "weapon"
 icon = ExtResource("2_kj6g3")
 strongness = 15.0
 metadata/_custom_type_script = "uid://bv3wxj82p0prm"
+
+[sub_resource type="Resource" id="Resource_niood"]
+script = ExtResource("4_pyybu")
+item_data = ExtResource("4_omiy7")
+chance = 0.2
+metadata/_custom_type_script = "uid://cxqoqdw8t4gis"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vn61j"]
 radius = 26.019224
@@ -34,6 +43,8 @@ motion_mode = 1
 wall_min_slide_angle = 0.0
 script = ExtResource("1_vn61j")
 weapon_data = SubResource("Resource_kj6g3")
+loot_table = Array[ExtResource("4_pyybu")]([ExtResource("5_wivaj"), SubResource("Resource_niood")])
+speed = 150.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(1, 0, 0, 1)

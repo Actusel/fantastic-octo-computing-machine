@@ -1,7 +1,7 @@
 class_name BaseEnemy extends BaseEntity
 
 @export var arrival_tolerance: float = 3.0
-@export var loot_table: Array[ItemData] = [] # Or use PackedScenes/Resources
+@export var loot_table: Array[LootItem] = [preload("res://wine_enemy_drops.tres")]
 
 # Common references
 var player: CharacterBody2D = null
@@ -33,19 +33,20 @@ func die():
 	queue_free()
 
 func drop_item():
-	# Default implementation using the hardcoded logic from melee_enemy for now
-	# Ideally this uses loot_table
 	var item_scene = preload("res://items&inventory/item.tscn")
-	var spear_data = preload("res://items&inventory/items/spear.tres")
-	var wine_data = preload("res://items&inventory/items/wine.tres")
-	var item_instance = item_scene.instantiate()
 	
-	if randf() > 0.5:
-		item_instance.item_data = spear_data
-	else:
-		item_instance.item_data = wine_data
-		
-	var random_offset = Vector2(randf_range(-30, 30), randf_range(-30, 30))
-	item_instance.global_position = global_position + random_offset
-	
-	get_parent().call_deferred("add_child", item_instance)
+	for loot_entry in loot_table:
+		if not loot_entry or not loot_entry.item_data:
+			continue
+			
+		if loot_entry.chance >= 1.0 or randf() <= loot_entry.chance:
+			var count = loot_entry.get_drop_count()
+			if count > 0:
+				var item_instance = item_scene.instantiate()
+				item_instance.item_data = loot_entry.item_data
+				item_instance.amount = count
+				
+				var random_offset = Vector2(randf_range(-30, 30), randf_range(-30, 30))
+				item_instance.global_position = global_position + random_offset
+				
+				get_parent().call_deferred("add_child", item_instance)
