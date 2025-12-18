@@ -399,3 +399,81 @@ func unequip_into_slot(equip_key: String, target_inv_index: int) -> void:
 			_equip_effect(new_item)
 	
 	emit_signal("inventory_updated")
+
+func get_save_data() -> Dictionary:
+	return {
+		"level": level,
+		"graph_data": graph_data,
+		"inventory": _serialize_inventory(),
+		"equipment": _serialize_equipment()
+	}
+
+func load_save_data(data: Dictionary):
+	unequip_all() # Reset stats
+	
+	if "level" in data:
+		level = int(data["level"])
+	
+	if "graph_data" in data:
+		update(data["graph_data"])
+	
+	if "inventory" in data:
+		var saved_inv = data["inventory"]
+		if saved_inv.size() > inventory.size():
+			inventory.resize(saved_inv.size())
+			
+		for i in range(saved_inv.size()):
+			var slot_data = saved_inv[i]
+			if slot_data:
+				var item = load(slot_data["path"])
+				if item:
+					inventory[i] = { "item": item, "count": int(slot_data["count"]) }
+				else:
+					inventory[i] = null
+			else:
+				inventory[i] = null
+		
+		for i in range(saved_inv.size(), inventory.size()):
+			inventory[i] = null
+				
+	if "equipment" in data:
+		var saved_eq = data["equipment"]
+		for key in saved_eq:
+			if key in equipment:
+				var slot_data = saved_eq[key]
+				if slot_data:
+					var item = load(slot_data["path"])
+					if item:
+						equipment[key] = { "item": item, "count": int(slot_data["count"]) }
+					else:
+						equipment[key] = null
+				else:
+					equipment[key] = null
+
+	reapply_equipment_effects()
+	emit_signal("inventory_updated")
+
+func _serialize_inventory() -> Array:
+	var serialized = []
+	for slot in inventory:
+		if slot == null:
+			serialized.append(null)
+		else:
+			serialized.append({
+				"path": slot["item"].resource_path,
+				"count": slot["count"]
+			})
+	return serialized
+
+func _serialize_equipment() -> Dictionary:
+	var serialized = {}
+	for key in equipment:
+		var slot = equipment[key]
+		if slot == null:
+			serialized[key] = null
+		else:
+			serialized[key] = {
+				"path": slot["item"].resource_path,
+				"count": slot["count"]
+			}
+	return serialized

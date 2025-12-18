@@ -15,7 +15,7 @@ extends Control
 
 
 var graph_data := {} 
-var current_graph := "leggies"
+var current_graph = "armstrong"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

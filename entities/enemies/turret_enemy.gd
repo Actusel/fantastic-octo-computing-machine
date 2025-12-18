@@ -1,40 +1,29 @@
-extends CharacterBody2D
+extends BaseEnemy
 class_name TurretEnemy
 # Export the projectile scene so we can assign it in the Inspector
 @export var projectile_scene: PackedScene = preload("res://combat/enemy_projectile.tscn")
 
 # --- Node References ---
-@onready var detection_radius: Area2D = $DetectionRadius
-@onready var ray_cast: RayCast2D = $RayCast2D
+# detection_radius, ray_cast, hp_bar are in BaseEnemy
 @onready var shoot_timer: Timer = $ShootTimer
 @onready var projectile_spawn: Marker2D = $ProjectileSpawn
 @onready var sprite: Sprite2D = $Sprite2D # Optional, for flipping
 @onready var backing_up_range: Area2D = $BackingUpRange
-@onready var hp_bar: ProgressBar = $hp_bar
 
 # --- State Variables ---
-# This will hold a reference to the player when they are in range
-var player: CharacterBody2D = null 
-# A simple flag to control firing rate
-var can_shoot: bool = false
+# player is in BaseEnemy
+# can_shoot -> can_attack
 var run:bool = false
-
+var can_shoot:bool
 
 func _ready() -> void:
+	super._ready()
 	# Connect signals from code (alternative to using the Node tab)
-	detection_radius.body_entered.connect(_on_detection_radius_body_entered)
-	detection_radius.body_exited.connect(_on_detection_radius_body_exited)
 	backing_up_range.body_entered.connect(_on_backing_up_range_area_entered)
 	backing_up_range.body_exited.connect(_on_backing_up_range_area_exited)
 	shoot_timer.start()
 	shoot_timer.timeout.connect(_on_shoot_timer_timeout)
 	pass
-
-func hp_changed(amount):
-	hp_bar.value+=amount
-	if hp_bar.value==0:
-		drop_item()
-		queue_free()
 
 func drop_item():
 	var item_scene = preload("res://items&inventory/item.tscn")
@@ -109,13 +98,8 @@ func shoot() -> void:
 	# Calculate direction from the spawn point (not the enemy center)
 	var direction = (player.global_position - projectile_spawn.global_position).normalized()
 	
-	# Set the projectile's properties
-	# This assumes your Projectile.gd script has a "direction" variable
-	projectile.direction = direction
-	
-	# Set its starting position and rotation
 	projectile.global_position = projectile_spawn.global_position
-	projectile.global_rotation = direction.angle()
+	projectile.setup_straight(direction, 300.0, 10.0)
 	
 	# Add the projectile to the main scene tree
 	get_tree().root.add_child(projectile)

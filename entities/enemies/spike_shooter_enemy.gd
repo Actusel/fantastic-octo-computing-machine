@@ -1,30 +1,18 @@
-extends CharacterBody2D
+extends BaseEnemy
 
-@onready var detection_radius: Area2D = $DetectionRadius
-@onready var hp_bar: ProgressBar = $hp_bar
 @onready var shoot_timer: Timer = $ShootTimer
-@onready var ray_cast: RayCast2D = $RayCast2D
+# detection_radius, hp_bar, ray_cast are in BaseEnemy
 
 @export var projectile_scene: PackedScene = preload("res://combat/enemy_projectile.tscn")
 
-var player: CharacterBody2D = null 
+# player is in BaseEnemy
 # A simple flag to control firing rate
-var can_shoot: bool = false
-
-
+# Using can_attack from BaseEntity instead of can_shoot
 
 func _ready() -> void:
-	detection_radius.body_entered.connect(_on_detection_radius_body_entered)
-	detection_radius.body_exited.connect(_on_detection_radius_body_exited)
+	super._ready()
 	shoot_timer.start()
 	shoot_timer.timeout.connect(_on_shoot_timer_timeout)
-
-
-func hp_changed(amount):
-	hp_bar.value+=amount
-	if hp_bar.value==0:
-		drop_item()
-		queue_free()
 
 func drop_item():
 	var item_scene = preload("res://items&inventory/item.tscn")
@@ -44,18 +32,9 @@ func drop_item():
 	
 	get_parent().call_deferred("add_child", item_instance)
 
-func _on_detection_radius_body_entered(body: Node2D):
-	# Check if the body that entered is in the "player" group
-	if body.is_in_group("player"):
-		player = body as CharacterBody2D # Store the player reference
-	
-func _on_detection_radius_body_exited(body: Node2D):
-	if body == player:
-		player = null
-		
 func _on_shoot_timer_timeout() -> void:
 	# When the timer finishes, allow the enemy to shoot again
-	can_shoot = true
+	can_attack = true
 
 func _physics_process(delta: float) -> void:
 	# If we don't have a player target, do nothing.
@@ -79,10 +58,10 @@ func _physics_process(delta: float) -> void:
 
 
 func shoot():
-	if not can_shoot or projectile_scene == null:
+	if not can_attack or projectile_scene == null:
 		return
 	
-	can_shoot = false
+	can_attack = false
 	shoot_timer.start()
 
 	print("shoot")
@@ -103,9 +82,5 @@ func shoot():
 		var angle := i * angle_step
 		var direction := Vector2.RIGHT.rotated(angle)
 
-		# Assign the direction to the projectile if it expects a velocity/direction variable
-		
-		projectile.direction = direction
-		
-		# Optional: rotate projectile visually to match its travel direction
-		projectile.rotation = angle
+		# Use setup_straight
+		projectile.setup_straight(direction, 300.0, 10.0)

@@ -1,11 +1,11 @@
-extends CharacterBody2D
+extends BaseEntity
 class_name Player
 
 @onready var dash_cooldown = $dash_cooldown
 @onready var dash_icon = $ColorRect
 @onready var label = $ui/Label
 @onready var inventory: Control = $ui/inventory
-@onready var hp_bar: ProgressBar = $ui/HP
+# hp_bar is handled in BaseEntity
 @onready var hp_label: Label = $ui/hp_label
 @onready var weapon_sprite: Sprite2D = $WeaponTexture
 @onready var attack_timer: Timer = $AttackTimer
@@ -13,15 +13,16 @@ class_name Player
 @onready var player_sprite: Sprite2D = $PlayerSprite
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var projectile_spawn: Marker2D = $ProjectileSpawn
-@onready var maze_gen: Node2D = $"../MazeGen"
+# Decoupled MazeGen reference
+signal player_died
 
 var save_label: Label
 
 @export var weapon: ItemData = null
-var can_attack: bool = true
+# can_attack is in BaseEntity
 var enemy: CharacterBody2D = null
 
-const SPEED = 200.0
+# SPEED is in BaseEntity as speed
 const dash_time = 0.2
 const DASH_SPEED = 600
 const push_str = 100
@@ -30,6 +31,7 @@ var dash_timer: float
 var damage: float
 
 func _ready() -> void:
+	super._ready()
 	# Create Save Label
 	save_label = Label.new()
 	save_label.text = "Progress Saved"
@@ -56,22 +58,25 @@ func _on_game_saved():
 		timer.timeout.connect(func(): save_label.visible = false)
 	
 func hp_changed(amount):
-	if not (amount<0 and dashing):
-		hp_bar.value+=amount
-		
+	if amount < 0:
+		if not dashing:
+			take_damage(-amount)
+	else:
+		heal(amount)
 	
-	if hp_bar.value <=0:
-		hp_bar.value = hp_bar.max_value
-		if maze_gen:
-			maze_gen.generate_maze()
-	
-	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
+	hp_label.text = str(current_hp) + "/" + str(max_hp)
+
+func die():
+	emit_signal("player_died")
+	current_hp = max_hp
+	update_health_ui()
+	hp_label.text = str(current_hp) + "/" + str(max_hp)
 
 func max_hp_changed(amount):
-	var new_hp = hp_bar.value+amount
-	hp_bar.max_value+=amount
-	hp_bar.value = new_hp
-	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
+	max_hp += amount
+	current_hp += amount
+	update_health_ui()
+	hp_label.text = str(current_hp) + "/" + str(max_hp)
 
 func change_weapon(new_weapon: ItemData ):
 	if new_weapon == null:
@@ -93,6 +98,7 @@ func dash_indicator():
 	else: return "ready" 
 
 func _physics_process(delta):
+	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
 	look_at(get_global_mouse_position())
 	collision_shape_2d.rotation = -rotation
 	player_sprite.rotation = -rotation
@@ -115,8 +121,8 @@ func _physics_process(delta):
 		dash_timer=dash_time
 		velocity=direction*DASH_SPEED
 	else: 
-		velocity.x = move_toward(velocity.x, direction.x*SPEED, 40)
-		velocity.y = move_toward(velocity.y, direction.y*SPEED, 40)
+		velocity.x = move_toward(velocity.x, direction.x*speed, 40)
+		velocity.y = move_toward(velocity.y, direction.y*speed, 40)
 	
 	move_and_slide()
 	
@@ -150,13 +156,9 @@ func shoot() -> void:
 	# --- Instance and configure the projectile ---
 	var projectile = weapon.projectile_scene.instantiate() as Area2D
 	
-	# Set the projectile's properties
-	# This assumes your Projectile.gd script has a "direction" variable
-	projectile.direction = global_transform.x.normalized()
-	
-	# Set its starting position and rotation
+	# Use the new setup function
 	projectile.global_position = projectile_spawn.global_position
-	projectile.global_rotation = global_rotation
+	projectile.setup_straight(global_transform.x.normalized(), 600.0, damage)
 	
 	# Add the projectile to the main scene tree
 	get_tree().root.add_child(projectile)
@@ -209,7 +211,10 @@ func _apply_damage(target: Node2D) -> void:
 
 	if is_enemy_still_in_range:
 		print("Player attack HITS!")
-		target.hp_changed(-damage)
+		if target.has_method("take_damage"):
+			target.take_damage(damage)
+		elif target.has_method("hp_changed"):
+			target.hp_changed(-damage)
 	else:
 		print("Player attack WHIFFS!")
 

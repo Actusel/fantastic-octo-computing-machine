@@ -10,10 +10,18 @@ enum Mode { STRAIGHT, BOOMERANG, HOMING }
 var current_mode = Mode.STRAIGHT
 var velocity = Vector2.ZERO
 var target_node: Node2D = null # For Boomerang (Boss) or Homing (Player)
+var direction: Vector2 = Vector2.ZERO # For compatibility
 
 func _ready():
 	# If using physics bodies, use body_entered. connect via editor or code:
 	body_entered.connect(_on_body_entered)
+	if has_node("VisibleOnScreenNotifier2D"):
+		$VisibleOnScreenNotifier2D.screen_exited.connect(queue_free)
+	
+	# Compatibility initialization
+	if direction != Vector2.ZERO and velocity == Vector2.ZERO:
+		velocity = direction * speed
+		rotation = direction.angle()
 
 func _physics_process(delta):
 	match current_mode:
@@ -37,10 +45,13 @@ func _physics_process(delta):
 			pass
 
 func _on_body_entered(body):
-	if body.is_in_group("player"):
-		if body.has_method("hp_changed"):
-			body.hp_changed(-damage)
-		queue_free()
+	# Ignore shooter if needed, but for now just hit anything
+	if body.has_method("take_damage"):
+		body.take_damage(damage)
+	elif body.has_method("hp_changed"):
+		body.hp_changed(-damage)
+		
+	queue_free()
 
 # --- External Setup Functions ---
 

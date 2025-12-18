@@ -1,30 +1,28 @@
-extends CharacterBody2D
+extends BaseEnemy
 
 # --- Enemy Stats ---
-@export var speed: float = 150.0
 @export var melee_damage: float = 25.0 # This will be overwritten by ItemData
 @export var weapon_data: ItemData
-@export var arrival_tolerance: float = 3.0 # How close to get to the last_known_position
+# speed, arrival_tolerance are in BaseEnemy/BaseEntity
 
 # --- Node References ---
-@onready var detection_radius: Area2D = $DetectionRadius
-@onready var ray_cast: RayCast2D = $RayCast2D
+# detection_radius, ray_cast are in BaseEnemy
 @onready var melee_area: Area2D = $MeleeArea
 @onready var attack_timer: Timer = $AttackTimer
 @onready var sprite: Sprite2D = $Sprite2D # Optional
 @onready var weapon_sprite: Sprite2D = $WeaponSprite
-@onready var hp_bar: ProgressBar = $hp_bar
+# hp_bar is in BaseEntity
 
 	
 # --- State Variables ---
-var player: CharacterBody2D = null
+# player is in BaseEnemy
 var last_known_position: Vector2 = Vector2.ZERO
-var can_attack: bool = true
 var is_attacking: bool = false
 var show_attack_flash: bool = false
 
 
 func _ready() -> void:
+	super._ready()
 	# Initialize last_known_position to its own position
 	# This prevents it from running to (0,0) at the start
 	last_known_position = global_position
@@ -40,38 +38,12 @@ func _ready() -> void:
 	# Hide weapon sprite initially
 	weapon_sprite.visible = false
 	# Connect signals (if not done in the editor)
-	detection_radius.body_entered.connect(_on_detection_radius_body_entered)
-	detection_radius.body_exited.connect(_on_detection_radius_body_exited)
 	attack_timer.timeout.connect(_on_attack_timer_timeout)
 	
-func hp_changed(amount):
-	hp_bar.value+=amount
-	if hp_bar.value==0:
-		drop_item()
-		queue_free()
-
-func drop_item():
-	var item_scene = preload("res://items&inventory/item.tscn")
-	var spear_data = preload("res://items&inventory/items/spear.tres")
-	var wine_data = preload("res://items&inventory/items/wine.tres")
-	var item_instance = item_scene.instantiate()
-	
-	if randf() > 0.5:
-		item_instance.item_data = spear_data
-	else:
-		item_instance.item_data = wine_data
-		
-	# Random position within a small radius (e.g., 30 pixels)
-	var random_offset = Vector2(randf_range(-30, 30), randf_range(-30, 30))
-	item_instance.global_position = global_position + random_offset
-	
-	get_parent().call_deferred("add_child", item_instance)
-
 
 func _physics_process(_delta: float) -> void:
 	# Reset velocity every frame
 	velocity = Vector2.ZERO
-	hp_bar.value-=.01
 	
 	if is_attacking:
 		move_and_slide()
@@ -174,22 +146,16 @@ func _apply_damage(target: Node2D) -> void:
 
 	if is_player_still_in_range:
 		print("Enemy attack HITS!")
-		target.hp_changed(-melee_damage)
+		if target.has_method("take_damage"):
+			target.take_damage(melee_damage)
+		elif target.has_method("hp_changed"):
+			target.hp_changed(-melee_damage)
 	else:
 		print("Enemy attack WHIFFS!")
 
 # --- Signal Handlers ---
 
-func _on_detection_radius_body_entered(body: Node2D) -> void:
-	if body.is_in_group("player"):
-		player = body as CharacterBody2D
-
-
-func _on_detection_radius_body_exited(body: Node2D) -> void:
-	if body == player:
-		player = null
-		# Optional: you could make it go back to its start position
-		# last_known_position = $StartPosition.global_position (if you add a Marker2D)
+# _on_detection_radius_body_entered/exited are in BaseEnemy
 
 func _on_attack_timer_timeout() -> void:
 	# When the timer finishes, allow the enemy to attack again

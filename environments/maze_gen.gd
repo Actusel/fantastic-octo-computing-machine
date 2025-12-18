@@ -41,6 +41,10 @@ func _ready() -> void:
 	if not tile_map_layer or not player:
 		push_error("MazeGenerator: Please assign TileMapLayer AND Player in inspector.")
 		return
+	
+	if player.has_signal("player_died"):
+		player.player_died.connect(generate_maze)
+		
 	# Create a container for enemies to make cleanup easier
 	_enemies_container = Node2D.new()
 	_enemies_container.name = "EnemiesContainer"
