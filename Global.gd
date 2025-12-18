@@ -216,6 +216,19 @@ func _unequip_effect(item: ItemData) -> void:
 		"weapon":
 			get_tree().call_group("player", "clear_weapon")
 
+func unequip_all() -> void:
+	for key in equipment:
+		if equipment[key] != null:
+			_unequip_effect(equipment[key]["item"])
+			equipment[key] = null
+	emit_signal("inventory_updated")
+
+func reapply_equipment_effects() -> void:
+	for key in equipment:
+		if equipment[key] != null:
+			_equip_effect(equipment[key]["item"])
+
+
 # --- Drag and Drop Helpers ---
 
 func drag_move_inventory_to_inventory(from_idx: int, to_idx: int) -> void:

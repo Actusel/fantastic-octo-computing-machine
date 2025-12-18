@@ -11,6 +11,7 @@ extends Control
 @onready var line_edit: LineEdit = $VBoxContainer/HBoxContainer/new_graph
 @onready var graph_ = $"graph_"
 @onready var label: Label = $VBoxContainer/WeightRow/label
+@onready var save_to_file: Button = $VBoxContainer/HBoxContainer2/SaveToFile
 
 var graph_data := {} 
 var current_graph := "leggies"
@@ -25,6 +26,7 @@ func _ready():
 	option_button.item_selected.connect(_on_graph_selected)
 	submit.pressed.connect(_on_submit)
 	clear.pressed.connect(_on_clear)
+	save_to_file.pressed.connect(_on_save_button_pressed)
 	add_graph.pressed.connect(_on_add_graph)
 	graph_.update_graph(graph_data)
 
@@ -87,4 +89,7 @@ func _on_game_started():
 	Global.update(graph_data)
 
 func _on_clear():
+	pass
+
+func _on_save_button_pressed():
 	pass

@@ -18,7 +18,7 @@ func _ready():
 	popup_panel.visibility_changed.connect(_toggled)
 
 func start_game():
-	get_tree().change_scene_to_file("res://environments/area_1.tscn")
+	get_tree().change_scene_to_file("res://environments/maze.tscn")
 	Global.emit_signal("game_started")
 	
 

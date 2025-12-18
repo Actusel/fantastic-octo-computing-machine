@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://cct0o8iiybjh8"]
+[gd_scene load_steps=11 format=4 uid="uid://cct0o8iiybjh8"]
 
 [ext_resource type="PackedScene" uid="uid://bcgit45sqlnrj" path="res://environments/props/door.tscn" id="1_8x04g"]
 [ext_resource type="TileSet" uid="uid://cb8u1v8xbhuye" path="res://assets/tiles/presets/floor.tres" id="2_k20wd"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://dhckiitcqatnk" path="res://items&inventory/items/bow.tscn" id="7_n4imn"]
 [ext_resource type="PackedScene" uid="uid://b57ut7t2odqej" path="res://entities/enemies/melee_enemy.tscn" id="8_wgmrn"]
 [ext_resource type="PackedScene" uid="uid://c4e4vmgjbyk5j" path="res://items&inventory/items/spear.tscn" id="9_xww42"]
+[ext_resource type="PackedScene" uid="uid://brym6sporoaco" path="res://items&inventory/items/red_shield.tscn" id="10_ngsoq"]
 
 [node name="area_1" type="Node2D"]
 
@@ -63,3 +64,9 @@ position = Vector2(886, 151)
 
 [node name="item2" parent="." instance=ExtResource("9_xww42")]
 position = Vector2(145, 233)
+
+[node name="RedShield" parent="." instance=ExtResource("10_ngsoq")]
+position = Vector2(246, 255)
+
+[node name="item3" parent="." instance=ExtResource("9_xww42")]
+position = Vector2(227, 350)

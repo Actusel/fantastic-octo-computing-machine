@@ -114,3 +114,10 @@ text = "submit"
 [node name="clear" type="Button" parent="VBoxContainer/ButtonsRow"]
 layout_mode = 2
 text = "clear"
+
+[node name="FileSaveRow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="SaveToFile" type="Button" parent="VBoxContainer/FileSaveRow"]
+layout_mode = 2
+text = "Save"

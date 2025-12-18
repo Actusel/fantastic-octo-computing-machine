@@ -30,11 +30,13 @@ var damage: float
 
 func _ready() -> void:
 	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
-	if Global.equipment["weapon"]:
-		change_weapon(Global.equipment["weapon"]["item"])
+	
 	melee_area.body_entered.connect(_on_melee_area_area_entered)
 	melee_area.body_exited.connect(_on_melee_area_area_exited)
 	attack_timer.timeout.connect(_on_attack_timer_timeout)
+	
+	# Sync with Global equipment
+	Global.reapply_equipment_effects()
 	
 func hp_changed(amount):
 	if not (amount<0 and dashing):

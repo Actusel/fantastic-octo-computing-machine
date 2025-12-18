@@ -25,6 +25,8 @@ enum slot_types {
 @export var slot_type: slot_types = slot_types.inventory
 @export var emtpy_texture: Texture2D = null
 
+static var dragged_slot: ItemSlot = null
+
 func _ready() -> void:
 	inv = get_tree().root.find_child("inventory", true, false)
 	button.pressed.connect(_on_click)
@@ -72,16 +74,17 @@ func _on_item_drop() -> void:
 	
 	# Drop logic (spawn in world)
 	var ground_item_scene := preload("uid://dwbqxt7i8lf4j")
-	var ground_item := ground_item_scene.instantiate()
-	ground_item.item_data = item_data
-	
 	var player = inv.player
+	var drop_pos = global_position
 	if player:
-		ground_item.global_position = player.global_position
-	else:
-		ground_item.global_position = global_position
+		drop_pos = player.global_position
 	
-	get_tree().current_scene.add_child(ground_item)
+	# Spawn multiple items for the stack
+	for i in range(stack_count):
+		var ground_item := ground_item_scene.instantiate()
+		ground_item.item_data = item_data
+		ground_item.global_position = drop_pos + Vector2(randf_range(-10, 10), randf_range(-10, 10))
+		get_tree().current_scene.add_child(ground_item)
 	
 	# Remove from data
 	if slot_type == slot_types.inventory:
@@ -106,6 +109,8 @@ func _get_equip_key() -> String:
 
 func _get_drag_data(at_position: Vector2):
 	if not filled: return null
+	
+	dragged_slot = self
 	
 	var preview = TextureRect.new()
 	preview.texture = item_display.texture
@@ -172,13 +177,15 @@ func _notification(what):
 		if has_node("ColorRect"):
 			get_node("ColorRect").modulate = Color(1, 1, 1, 1) # Reset color
 			
-		if not is_drag_successful():
-			var mouse_pos = get_global_mouse_position()
-			# Check if mouse is outside the inventory UI
-			if inv and is_instance_valid(inv):
-				var inv_rect = inv.get_global_rect()
-				if not inv_rect.has_point(mouse_pos):
-					_on_item_drop()
+		if dragged_slot == self:
+			if not is_drag_successful():
+				var mouse_pos = get_global_mouse_position()
+				# Check if mouse is outside the inventory UI
+				if inv and is_instance_valid(inv):
+					var inv_rect = inv.get_global_rect()
+					if not inv_rect.has_point(mouse_pos):
+						_on_item_drop()
+			dragged_slot = null
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
