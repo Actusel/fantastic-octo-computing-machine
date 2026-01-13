@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://bgstnt0syqkyr" path="res://items&inventory/UI/inv_slot.tscn" id="1_noaob"]
 
 [node name="inventory" type="Control"]
-visible = false
 clip_contents = true
 custom_minimum_size = Vector2(400, 400)
 layout_mode = 3
@@ -80,3 +79,8 @@ offset_top = 44.0
 offset_right = 112.0
 offset_bottom = 92.0
 slot_type = 1
+
+[node name="stat_debug" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0

@@ -2,6 +2,7 @@ extends Control
 
 @onready var inv_grid: GridContainer = $CenterContainer/GridContainer
 @onready var label: Label = $weight
+@onready var stat_debug: RichTextLabel = $stat_debug
 
 var player = null
 

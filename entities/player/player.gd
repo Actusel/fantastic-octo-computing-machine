@@ -33,6 +33,13 @@ var boss_bar: ProgressBar
 
 func _ready() -> void:
 	super._ready()
+	# Apply Exercise Stats (Base Stats)
+	max_hp = 100.0 + (Global.stamina * 10.0) # Cardio Bonus
+	current_hp = max_hp
+	speed = 100.0 + (Global.stamina * 2.0)   # Cardio Speed Bonus
+	damage = Global.arm                      # Upper Body Base Damage
+	update_health_ui()
+	
 	# Create Save Label
 	
 	_setup_boss_bar()
@@ -107,7 +114,7 @@ func change_weapon(new_weapon: ItemData ):
 		
 	weapon=new_weapon
 	weapon_sprite.texture = weapon.icon
-	damage = weapon.strongness
+	damage = weapon.strongness + Global.arm # Add Strength Bonus
 	if weapon.weapon_range == "long": weapon_sprite.visible = true
 	else: weapon_sprite.visible = false
 	
@@ -115,6 +122,7 @@ func clear_weapon():
 	weapon = null
 	weapon_sprite.texture = null
 	weapon_sprite.visible = false
+	damage = Global.arm # Revert to Unarmed Strength
 
 func dash_indicator():
 	if dash_cooldown.time_left: return snapped(dash_cooldown.time_left,.01) 

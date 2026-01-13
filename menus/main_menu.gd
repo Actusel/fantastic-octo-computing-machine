@@ -15,6 +15,7 @@ func _ready():
 	popup_panel.size.x= get_viewport().size.x/3
 	popup_panel.size.y= get_viewport().size.y/1.5
 	popup_panel.popup_centered()
+	popup_panel.visible = false
 	popup_panel.visibility_changed.connect(_toggled)
 
 func start_game():

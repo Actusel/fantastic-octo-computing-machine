@@ -15,13 +15,23 @@ script = ExtResource("1_6tnqb")
 layout_mode = 0
 offset_left = 56.0
 offset_top = 49.0
-offset_right = 468.0
-offset_bottom = 187.0
+offset_right = 412.0
+offset_bottom = 519.0
 
 [node name="options" type="Label" parent="FlowContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 91
 text = "options:"
+
+[node name="AimAssist" type="CheckBox" parent="FlowContainer"]
+layout_mode = 2
+button_pressed = true
+text = "Aim assist"
+
+[node name="DebugToggle" type="CheckBox" parent="FlowContainer"]
+layout_mode = 2
+button_pressed = true
+text = "Aim assist"
 
 [node name="back" type="Button" parent="."]
 layout_mode = 0
@@ -31,3 +41,12 @@ offset_right = 235.0
 offset_bottom = 649.0
 theme_override_font_sizes/font_size = 46
 text = "Back"
+
+[node name="Save" type="Button" parent="."]
+layout_mode = 0
+offset_left = 907.0
+offset_top = 568.0
+offset_right = 1140.0
+offset_bottom = 640.0
+theme_override_font_sizes/font_size = 46
+text = "Save"

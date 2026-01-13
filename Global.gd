@@ -4,6 +4,8 @@ signal game_started
 signal inventory_updated
 
 var level: int
+var aim_assist = true
+var debug_mode = false
 
 # Inventory Data
 # Each element is null or { "item": ItemData, "count": int }
@@ -16,28 +18,118 @@ var equipment: Dictionary = {
 }
 
 var graph_data := {} 
-var stamina = 0.0
-var leg = 0.0
-var arm = 0.0
-var back = 0.0
 
-func update(new_data):
-	graph_data = new_data
-	if graph_data:
-		stamina = _find_max_y(graph_data["stamina"])
-		leg = _find_max_y(graph_data["leggies"])
-		arm = _find_max_y(graph_data["armstrong"])
-		_resize_inventory()
+var fitness_pools = {
+	"upper_body": 0.0,
+	"lower_body": 0.0,
+	"cardio": 0.0, # Run/Cycle
+	"last_decay_time": 0
+}
+
+var exercise_db = {
+	# Lower Body
+	"Squat": "lower_body",
+	"Deadlift": "lower_body",
+	"Lunge": "lower_body",
+	"Leg Press": "lower_body",
 	
+	# Upper Body
+	"Bench Press": "upper_body",
+	"Overhead Press": "upper_body",
+	"Push Up": "upper_body",
+	"Pull Up": "upper_body",
+	"Dumbbell Curl": "upper_body",
+	"Rowing": "upper_body", 
+	
+	# Cardio
+	"Running": "cardio",
+	"Cycling": "cardio"
+}
 
-func _find_max_y(series: Array) -> float:
-	if series.is_empty():
-		return 0.0
-	var max_val = series[0]["y"]
-	for p in series:
-		if p["y"] > max_val:
-			max_val = p["y"]
-	return max_val
+# Derived stats (Levels 0-100+)
+# Example: 1250 pool -> Level 10-15?
+# Let's say Level = Sqrt(Pool) / 2?  Sqrt(1250) = 35 / 2 = 17.
+# Or just Pool / 100.
+# 100kg * 5 reps = 100^1.2 * 5 = 251 * 5 = 1255.
+# If we want Level ~12 for that, Pool/100 is good.
+var leg: float:
+	get: return fitness_pools["lower_body"] / 100.0
+var arm: float:
+	get: return fitness_pools["upper_body"] / 100.0
+var stamina: float:
+	get: return fitness_pools["cardio"] / 100.0
+var back: float:
+	get: return 0.0 # Merged into upper usually, or ignored
+
+func update_graph_data(new_data):
+	graph_data = new_data
+	# Legacy max calculation removed in favor of fitness_pools
+	_resize_inventory()
+
+# New function to handle exercise logging
+func log_exercise(exercise_name: String, weight: float, reps: float, date_unix: int):
+	# 1. Update Graph History (Visuals)
+	if not graph_data.has(exercise_name):
+		graph_data[exercise_name] = []
+	
+	# Check if entry for date exists to overwrite?
+	# For simplicity, just append. If we want overwrite logic, we can add it.
+	# The UI currently does overwrite logic. We can keep UI logic and just sync here.
+	# But accumulating pool is the key.
+	
+	# For accumulation: We add to the pool.
+	# Formula: Score = (Weight ^ 1.2) * Reps
+	# Weight in kg. Reps in count (or km for cardio).
+	
+	# Bias for cardio: "Weight" might be 1 (bodyweight) or speed?
+	# Usually cardio is Distance (reps) * Speed?
+	# Let's assume for Cardio: Weight input is Distance(km), Reps input is Time(min)? 
+	# Or user just enters "reps" as distance?
+	# Let's standardize: 
+	# Lifting: Weight = kg, Reps = count.
+	# Cardio: Weight = 0 (ignored) or 1? Reps = Distance(km)?
+	
+	var score = 0.0
+	var type = exercise_db.get(exercise_name, "")
+	
+	if type == "cardio":
+		# Cardio scoring: Distance * 100?
+		# If user inputs Distance in "weight" box...
+		# Assume 'weight' is the primary metric for the graph.
+		# For running, usually graph is Pace or Distance.
+		# Let's say Weight = Distance (km).
+		score = weight * 50.0 # 5km run -> 250 points.
+	else:
+		# Lifting
+		if weight <= 0: weight = 1.0 # Prevent error
+		score = pow(weight, 1.2) * reps
+	
+	if type != "":
+		fitness_pools[type] += score
+		print("Added ", score, " to ", type, ". Total: ", fitness_pools[type])
+	
+	_resize_inventory()
+
+func apply_decay():
+	var current_time = Time.get_unix_time_from_system()
+	if fitness_pools["last_decay_time"] == 0:
+		fitness_pools["last_decay_time"] = current_time
+		return
+
+	var seconds_since = current_time - fitness_pools["last_decay_time"]
+	var weeks = seconds_since / (60 * 60 * 24 * 7.0)
+	
+	if weeks >= 1.0:
+		var decay_factor = pow(0.90, int(weeks)) # 10% per full week
+		fitness_pools["upper_body"] *= decay_factor
+		fitness_pools["lower_body"] *= decay_factor
+		fitness_pools["cardio"] *= decay_factor
+		
+		# Advance time by the integer weeks processed
+		fitness_pools["last_decay_time"] += int(weeks) * (60 * 60 * 24 * 7)
+		print("Applied decay. Weeks: ", int(weeks), " Factor: ", decay_factor)
+		_resize_inventory()
+
 
 # --- Inventory Logic ---
 
@@ -130,7 +222,7 @@ func consume_equipment(key: String, amount: int) -> bool:
 	return true
 
 func get_max_weight() -> int:
-	return 500 + int(round(leg * 10))
+	return 100 + int(round(leg * 10))
 
 # --- Item Usage / Equipment Logic ---
 
@@ -399,12 +491,19 @@ func unequip_into_slot(equip_key: String, target_inv_index: int) -> void:
 	
 	emit_signal("inventory_updated")
 
+
+
 func get_save_data() -> Dictionary:
 	return {
 		"level": level,
 		"graph_data": graph_data,
+		"fitness_pools": fitness_pools,
 		"inventory": _serialize_inventory(),
-		"equipment": _serialize_equipment()
+		"equipment": _serialize_equipment(),
+		"options": {
+			"aim_assist": aim_assist,
+			"debug_mode": debug_mode
+		}
 	}
 
 func load_save_data(data: Dictionary):
@@ -414,8 +513,21 @@ func load_save_data(data: Dictionary):
 		level = int(data["level"])
 	
 	if "graph_data" in data:
-		update(data["graph_data"])
-	
+		graph_data = data["graph_data"]
+		# Only update inventory, don't overwrite pools from graph
+		_resize_inventory()
+		
+	if "fitness_pools" in data:
+		fitness_pools = data["fitness_pools"]
+		# Handle backward compatibility / initialization
+		if not fitness_pools.has("last_decay_time"):
+			fitness_pools["last_decay_time"] = Time.get_unix_time_from_system()
+	else:
+		# Initialize if new save
+		fitness_pools["last_decay_time"] = Time.get_unix_time_from_system()
+		
+	apply_decay()
+
 	if "inventory" in data:
 		var saved_inv = data["inventory"]
 		if saved_inv.size() > inventory.size():
