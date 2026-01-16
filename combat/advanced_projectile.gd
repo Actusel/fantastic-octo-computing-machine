@@ -61,11 +61,11 @@ func setup_straight(dir: Vector2, spd: float, dmg: float):
 	damage = dmg
 
 # Used for the "Rain" attack if you want them to curve slightly toward player
-func setup_homing(dir: Vector2, spd: float, dmg: float, target: Node2D):
+func setup_homing(dir: Vector2, spd: float, dmg: float, target: Node2D, steer: float = 500.0):
 	current_mode = Mode.HOMING
 	velocity = dir * spd
 	target_node = target
-	steer_force = 500.0 # Adjust for stronger/weaker turning
+	steer_force = steer # Adjust for stronger/weaker turning
 	damage = dmg
 
 # Used for the "Bloom & Wither" attack

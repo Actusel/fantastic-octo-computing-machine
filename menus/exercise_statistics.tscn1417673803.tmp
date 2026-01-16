@@ -39,18 +39,17 @@ offset_bottom = 553.0
 layout_mode = 2
 
 [node name="new_graph" type="LineEdit" parent="VBoxContainer/CreateNew"]
-custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 placeholder_text = "Exercise name"
 
 [node name="exercise_type" type="OptionButton" parent="VBoxContainer/CreateNew"]
 layout_mode = 2
 item_count = 3
-popup/item_0/text = "upper_body"
+popup/item_0/text = "Upper Body"
 popup/item_0/id = 0
-popup/item_1/text = "lower_body"
+popup/item_1/text = "Lower Body"
 popup/item_1/id = 1
-popup/item_2/text = "cardio"
+popup/item_2/text = "Cardio"
 popup/item_2/id = 2
 
 [node name="add_graph" type="Button" parent="VBoxContainer/CreateNew"]

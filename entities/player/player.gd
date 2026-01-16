@@ -14,6 +14,7 @@ class_name Player
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var projectile_spawn: Marker2D = $ProjectileSpawn
 @onready var save_label: Label = $ui/SaveLabel
+
 # Decoupled MazeGen reference
 signal player_died
 
@@ -30,6 +31,8 @@ var dashing = false
 var dash_timer: float
 var damage: float
 var boss_bar: ProgressBar
+var current_target: Node2D = null
+var aim_indicator: Polygon2D = null
 
 func _ready() -> void:
 	super._ready()
@@ -43,6 +46,7 @@ func _ready() -> void:
 	# Create Save Label
 	
 	_setup_boss_bar()
+	_setup_aim_indicator()
 	
 	SaveManager.game_saved.connect(_on_game_saved)
 
@@ -128,11 +132,69 @@ func dash_indicator():
 	if dash_cooldown.time_left: return snapped(dash_cooldown.time_left,.01) 
 	else: return "ready" 
 
+func _setup_aim_indicator():
+	aim_indicator = Polygon2D.new()
+	aim_indicator.polygon = PackedVector2Array([
+		Vector2(0, 0), Vector2(8, -12), Vector2(-8, -12)
+	])
+	aim_indicator.color = Color(1, 0, 0, 0.8)
+	add_child(aim_indicator)
+	aim_indicator.top_level = true
+	aim_indicator.visible = false
+
+func find_best_target() -> Node2D:
+	if not Global.aim_assist: return null
+	
+	var enemies = get_tree().get_nodes_in_group("enemy")
+	var mouse_pos = get_global_mouse_position()
+	var best = null
+	var min_dist = INF
+	
+	var vp_rect = get_viewport_rect()
+	var canvas = get_canvas_transform()
+	var space = get_world_2d().direct_space_state
+	
+	for e in enemies:
+		if not is_instance_valid(e): continue
+		if not e is Node2D: continue
+		
+		# 1. Onscreen
+		var screen_pos = canvas * e.global_position
+		if not vp_rect.has_point(screen_pos): continue
+		
+		# 2. Line of Sight
+		var query = PhysicsRayQueryParameters2D.create(projectile_spawn.global_position, e.global_position)
+		query.exclude = [self]
+		var result = space.intersect_ray(query)
+		if result:
+			if result.collider != e and not result.collider.is_in_group("enemy"):
+				continue
+		
+		# 3. Closest to Mouse
+		var d = e.global_position.distance_to(mouse_pos)
+		if d < min_dist:
+			min_dist = d
+			best = e
+			
+	return best
+
 func _physics_process(delta):
 	hp_label.text = str(hp_bar.value) + "/" + str(hp_bar.max_value)
 	look_at(get_global_mouse_position())
 	collision_shape_2d.rotation = -rotation
 	player_sprite.rotation = -rotation
+	
+	if Global.aim_assist:
+		current_target = find_best_target()
+		if current_target and aim_indicator:
+			aim_indicator.global_position = current_target.global_position + Vector2(0, -40)
+			aim_indicator.visible = true
+		elif aim_indicator:
+			aim_indicator.visible = false
+	elif aim_indicator:
+		aim_indicator.visible = false
+		current_target = null
+	
 	var direction = Input.get_vector("moveleft","moveright","moveup","movedown")
 	label.set_text(str(dash_indicator()))
 	
@@ -189,7 +251,16 @@ func shoot() -> void:
 	
 	# Use the new setup function
 	projectile.global_position = projectile_spawn.global_position
-	projectile.setup_straight(global_transform.x.normalized(), 600.0, damage)
+	
+	if current_target and Global.aim_assist:
+		var dir = (current_target.global_position - projectile_spawn.global_position).normalized()
+		# Slight homing check. Default steer is 500, we use 200 for slight.
+		if projectile.has_method("setup_homing"):
+			projectile.setup_homing(dir, 600.0, damage, current_target, 200.0)
+		else:
+			projectile.setup_straight(dir, 600.0, damage)
+	else:
+		projectile.setup_straight(global_transform.x.normalized(), 600.0, damage)
 	
 	# Add the projectile to the main scene tree
 	get_tree().root.add_child(projectile)
